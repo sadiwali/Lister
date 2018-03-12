@@ -1,0 +1,49 @@
+<ion-content center text-center scroll="false" >
+  <ion-grid>
+    <ion-row center>
+      <ion-col>
+
+
+        <ion-list inset no-lines>
+
+          <ion-item>
+            <ion-label stacked text-center>Email</ion-label>
+            <ion-input text-center type="email" [(ngModel)]="user.email"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label stacked text-center>Password</ion-label>
+            <ion-input text-center type="password" [(ngModel)]="user.password"></ion-input>
+          </ion-item>
+
+          <ion-item text-center>
+            <button ion-button small clear color="dark" (click)="forgotPassword();">Forgot your password?</button>
+          </ion-item>
+
+          <div text-center>
+            <ion-grid>
+              <ion-row>
+
+                <ion-col>
+                  <button ion-button color="light" round full large (click)="signUpUser();">Sign up</button>
+                </ion-col>
+                <ion-col>
+                  <button color="primary" round ion-button full large (click)="signInUser();">Log in</button>
+                </ion-col>
+
+              </ion-row>
+            </ion-grid>
+
+          </div>
+
+
+        </ion-list>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <p text-center color="dark" (click)="showTerms();">Terms</p>
+
+
+</ion-content>

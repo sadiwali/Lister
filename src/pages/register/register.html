@@ -1,0 +1,60 @@
+<!--
+  Generated template for the RegisterPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-toolbar no-border-top>
+    <button ion-button icon-only menuToggle (click)="closeModal()">
+      <ion-icon name="arrow-back"></ion-icon>
+    </button>
+    <ion-title>Sign up</ion-title>
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content padding>
+  <ion-label text-center style="color:dimgray">
+    Create your new Lister account, its completely free!
+  </ion-label>
+  <ion-list inset no-lines>
+
+    <ion-item>
+      <ion-label text-center stacked>Email:</ion-label>
+      <ion-input (blur)="validate(0);" [class.invalid]="!form.email.valid" text-center type="text" [(ngModel)]="form.email.text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label text-center stacked>Your name:</ion-label>
+      <ion-input (blur)="validate(1);" [class.invalid]="!form.name.valid" text-center type="text" [(ngModel)]="form.name.text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label text-center stacked>Password:</ion-label>
+      <ion-input (blur)="validate(2);" [class.invalid]="!form.password_main.valid" text-center type="password" [(ngModel)]="form.password_main.text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label text-center stacked>Password again:</ion-label>
+      <ion-input (blur)="validate(3);" [class.invalid]="!form.password_sub.valid" text-center type="password" [(ngModel)]="form.password_sub.text"></ion-input>
+    </ion-item>
+    <ion-label text-center>By tapping SIGN UP, I agree to the
+      <a (click)="showTerms();">rules.</a>
+    </ion-label>
+    <ion-item>
+
+      <div text-center>
+        <button ion-button round large (click)="register()">Sign up!</button>
+      </div>
+
+    </ion-item>
+
+    <ion-item text-center *ngIf="loadingRegister">
+      <ion-spinner></ion-spinner>
+    </ion-item>
+
+  </ion-list>
+  
+</ion-content>
