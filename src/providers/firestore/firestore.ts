@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
+import { AngularFirestore } from 'angularfire2/firestore';
 import { AuthProvider } from '../auth/auth';
 import { MediaType } from '../ani-search/ani-search';
 import { Observable } from 'rxjs/Observable';
@@ -40,7 +40,7 @@ export class FirestoreProvider {
   addMedia(data: MediaData): any {
     return new Promise((resolve, reject) => {
       // query to see if duplicate exists
-      let query_res = this.firestore.firestore.collection('users')
+     this.firestore.firestore.collection('users')
         .doc(this.authP.getCurrentUser().uid.toString())
         .collection('media').where('title', '==', data.title).get()
         .then((res) => {

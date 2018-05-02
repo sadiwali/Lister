@@ -8,11 +8,8 @@ import { Const } from '../../package/Const';
 import { ToastController } from 'ionic-angular/components/toast/toast-controller';
 import { AuthProvider } from '../../providers/auth/auth';
 import { validateEmail } from '../../package/Tools';
-import firebase from 'firebase/app';
 import { AlertController } from 'ionic-angular/components/alert/alert-controller';
 import { TabsPage } from '../tabs/tabs';
-import { Placeholder } from '@angular/compiler/src/i18n/i18n_ast';
-import { MediaType, AniSearchProvider } from '../../providers/ani-search/ani-search';
 /**
  * Generated class for the LoginPage page.
  *

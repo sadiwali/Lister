@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { User } from '../../package/models';
 import { ModalController } from 'ionic-angular/components/modal/modal-controller';
 import { TermsPage } from '../terms/terms';
 import { ViewController } from 'ionic-angular/navigation/view-controller';

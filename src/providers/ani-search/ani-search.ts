@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SearchResult } from 'imdb-api';
 import * as imdb from '../../../node_modules/imdb-api';
 /*
   Generated class for the AniSearchProvider provider.

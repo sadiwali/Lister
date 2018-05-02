@@ -4,7 +4,6 @@ import { AddPage } from '../add/add';
 import { AniSearchProvider } from '../../providers/ani-search/ani-search';
 import { MediaType } from '../../providers/ani-search/ani-search';
 import { FirestoreProvider } from '../../providers/firestore/firestore';
-import { Observable } from 'rxjs/Observable';
 import { MediaInfoPage } from '../media-info/media-info';
 
 /**

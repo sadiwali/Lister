@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController, AlertController } from 'ionic-angular';
 import { ViewController } from 'ionic-angular/navigation/view-controller';
 import { MediaType, AniSearchProvider } from '../../providers/ani-search/ani-search';
-import { AngularFirestore } from 'angularfire2/firestore';
 import { AuthProvider } from '../../providers/auth/auth';
 import { MediaData, FirestoreProvider, FsReturnCodes } from '../../providers/firestore/firestore';
 
@@ -79,7 +78,6 @@ export class AddPage {
       return;
     }
     this.selectedSearchResult = index;
-    let searchResultItem = this.searchResults[index];
   }
 
   addNew() {

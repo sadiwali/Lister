@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ListPage } from '../list/list';
-import { AddPage } from '../add/add';
 import { ProfilePage } from '../profile/profile';
 import { SettingsPage } from '../settings/settings';
 import { ModalController } from 'ionic-angular/components/modal/modal-controller';
