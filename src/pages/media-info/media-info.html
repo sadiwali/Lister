@@ -1,0 +1,40 @@
+<!--
+  Generated template for the MediaInfoPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-toolbar no-border-top>
+    <button ion-button icon-only menuToggle (click)="closeModal()">
+      <ion-icon name="arrow-back"></ion-icon>
+    </button>
+    <ion-buttons end>
+      <button ion-button icon-only>
+        <ion-icon name="more"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>{{currMediaData.title}}</ion-title>
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content>
+
+
+  <div class="cover_image"></div>
+  <ion-list no-lines>
+    <ion-item>
+      <h1>rated {{currMediaData.rating}}/10</h1>
+    </ion-item>
+    <ion-item>
+      <p>{{currMediaData.comments}}</p>
+    </ion-item>
+    <ion-item>
+      <p>you watched this on {{currMediaData.watchDate.getDate() + " " + currMediaData.watchDate.getMonth() + " " + currMediaData.watchDate.getFullYear()}}
+      </p>
+    </ion-item>
+  </ion-list>
+
+</ion-content>

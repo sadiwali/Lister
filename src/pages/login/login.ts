@@ -11,6 +11,8 @@ import { validateEmail } from '../../package/Tools';
 import firebase from 'firebase/app';
 import { AlertController } from 'ionic-angular/components/alert/alert-controller';
 import { TabsPage } from '../tabs/tabs';
+import { Placeholder } from '@angular/compiler/src/i18n/i18n_ast';
+import { MediaType, AniSearchProvider } from '../../providers/ani-search/ani-search';
 /**
  * Generated class for the LoginPage page.
  *
@@ -28,21 +30,24 @@ export class LoginPage {
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public modalCtrl: ModalController, public toastCtrl: ToastController,
     public authP: AuthProvider, public alertCtrl: AlertController) {
-    
 
     this.user.email = "sadiwali@hotmail.com";
     this.user.password = "frgtwhy";
-    this.signInUser();
+    //this.signInUser();
+
+    // debug imdb module
+    
+
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad LoginPage');
   }
 
-  createToast(message: string): any {
+  createToast(message: string, duration = 3000): any {
     return this.toastCtrl.create({
       message,
-      duration: 3000
+      duration: duration
     });
   }
 
@@ -56,7 +61,7 @@ export class LoginPage {
     this.modalCtrl.create(TermsPage).present();
   }
 
-  async signInUser() {
+  signInUser() {
     if (!validateEmail(this.user.email)) {
       this.createToast("That is not a valid email").present();
       return;
@@ -66,29 +71,58 @@ export class LoginPage {
       this.createToast("Password is not valid!").present();
       return;
     }
-
     // both inputs valid, attempt to validate
 
-
-    try {
-      const perRes = await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-      
-      const res = await this.authP
-        .signInUser(this.user.email, this.user.password);
-
-      if (res && res.uid) {
-        // go to tabs page
-        this.navCtrl.push(TabsPage);
-      } else {
-        this.createAlert("Uh oh! Something went wrong").present();
-      }
-
-    } catch (e) {
+    // attempt to set persistence
+    this.authP.setPersistence().then(() => {
+      // do nothing if succeeded
+    }).catch(() => {
+      this.createToast("Could not set persistence.").present();
+    })
+    // attempt to sign in
+    this.authP.signInUser(this.user.email, this.user.password).then(() => {
+      this.navCtrl.push(TabsPage);
+    }).catch((e) => {
       this.authP.handleAuthError(this, e);
-    }
+    });
 
   }
 
+  /* Display the forgot password alert */
+  forgotPassword() {
+    this.alertCtrl.create({
+      title: 'Reset Password',
+      inputs: [
+        {
+          name: 'email',
+          placeholder: 'email',
+          type: 'email'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Submit',
+          handler: data => {
+            console.log(data.email);
+            if (validateEmail(data.email)) {
+              this.authP.resetPassword(data.email).then(() => {
+                this.createAlert("Password reset email sent!").present();;
+              }).catch (() => {
+                this.createAlert("Could not send password reset email.").present();
+              })
+            } else {
+              this.createAlert("Incorrect email.").present();
+            }
+          }
+        }
+      ]
+
+    }).present();
+  }
 
   signUpUser() {
     let modal = this.modalCtrl.create(RegisterPage);
@@ -104,6 +138,5 @@ export class LoginPage {
 
     modal.present();
   }
-
-
+  
 }

@@ -17,7 +17,49 @@
 
 
 <ion-content padding>
-  
+
+
+  <ion-searchbar [(ngModel)]="query" [showCancelButton]="true" (ionInput)="search($event);" (ionCancel)="search(null);">
+  </ion-searchbar>
+  <ion-content style="max-height: 500px; height: 400px;">
+
+    <ion-list>
+      <ion-item no-lines [ngClass]="(i == selectedSearchResult) ? 'selected' : ''" *ngFor="let item of searchResults; let i = index" (click)="selectSearchResult(i);">
+        <ion-avatar item-start>
+          <img style="object-fit: cover;" src="{{item.coverImage.medium}}">
+        </ion-avatar>
+        <h2>{{item.title}}</h2>
+        <h3>{{item.startDate.year}}</h3>
+      </ion-item>
+
+    </ion-list>
+  </ion-content>
+
+
+  <ion-list>
+
+
+    <ion-item>
+      <ion-input [(ngModel)]="comments" placeholder="Comments..."></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>your rating {{rating ? "is a " + rating : ""}}</ion-label>
+      <ion-range [(ngModel)]="rating" type="number" min="0" max="10" step="1" snaps="true" pin="true">
+          <ion-label range-left>0</ion-label>
+          <ion-label range-right>10</ion-label>
+      </ion-range>
+    </ion-item>
+
+
+    <ion-item>
+      <button ion-button color="light" round full large (click)="addNew();">Add</button>
+    </ion-item>
+
+
+
+  </ion-list>
+
 
 
 </ion-content>

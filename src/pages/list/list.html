@@ -5,79 +5,37 @@
   Ionic pages and navigation.
 -->
 
-<ion-content padding>
+
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>My List</ion-title>
+  </ion-navbar>
+
+</ion-header>
 
 
-  <div class="listDisp" *ngIf="isListView">
+<ion-content>
+  <ion-list>
+    <ion-item text-center *ngIf="myList.length == 0">
+      <p>{{error ? "Could not get your list :(" : "Your list is empty."}}</p>
+    </ion-item>
+    <ion-item no-lines *ngFor="let item of myList; let i = index;" (click)="openMedia(i);">
+      <ion-avatar item-start>
+        <img style="object-fit: cover;" src="{{item.coverImage.medium}}" />
+      </ion-avatar>
+      <h2>{{item.title.length > MAX_TITLE_LEN ? item.title.substring(0, MAX_TITLE_LEN) + "..." : item.title}}
+        <span style="float:right;">{{item.rating}} stars</span>
+      </h2>
+      <h3>watched on {{item.watchDate.getDate() + " " + item.watchDate.getMonth() + " " + item.watchDate.getFullYear()}}
+        <span style="float: right; opacity: 0.5;">#{{i + 1}}/{{myList.length}}</span>
+      </h3>
+    </ion-item>
 
-    <ion-list no-lines>
-
-      <ion-item (click)="openShow(this);">
-        <ion-avatar item-start class="square_img">
-          <img src="../../assets/imgs/1304.jpg">
-        </ion-avatar>
-
-        <h2>
-          <b class="title">Naruto</b>
-          <span class="rating">ANIME</span>
-          <span style="float:right"># 1</span>
-        </h2>
-
-        <p class="date">
-          <ion-icon name="star"></ion-icon> 45
-          <span style="float: right;">
-            <ion-icon name="alarm"></ion-icon>
-            &nbsp; 12-24-00
-          </span>
-        </p>
-      </ion-item>
-
-
-    </ion-list>
-  </div>
-
-
-  <div class="myContainer" *ngIf="!isListView">
-
-    <ion-card class="itemCard">
-      <img class="cardImage" src="../../assets/imgs/add_img.jpg" />
-      <div class="cont">
-        <p class="rating">██████
-          <span style="float:right">
-            <span style="float:left">
-              <ion-icon name="star"></ion-icon>&nbsp; ██</span>
-          </span>
-        </p>
-        <p class="title">███████</p>
-        <p class="date">
-          <span style="float:left">
-            <ion-icon name="alarm"></ion-icon>
-          </span>&nbsp; █ &nbsp;-&nbsp; █ &nbsp;-&nbsp; █</p>
-      </div>
-    </ion-card>
-
-
-    <ion-card class="itemCard" (click)="openShow();">
-      <img class="cardImage" src="../../assets/imgs/1304.jpg" />
-      <p class="rating">ANIME
-        <span style="float:right">
-          <span style="float:left">
-            <ion-icon name="star"></ion-icon>&nbsp; 45</span>
-        </span>
-      </p>
-      <p class="title">Naruto</p>
-      <p class="date">
-        <span style="float:left">
-          <ion-icon name="alarm"></ion-icon>
-        </span>&nbsp; 12-21-17</p>
-    </ion-card>
-
-
-  </div>
-
-  <ion-fab bottom right>
-    <button ion-fab color="light" (click)="isListView = !isListView;">
-      <ion-icon name="{{isListView? 'apps' : 'list'}}"></ion-icon>
+  </ion-list>
+  <ion-fab right bottom>
+    <button (click)="addItem();" ion-fab color="light">
+      <ion-icon name="add"></ion-icon>
     </button>
   </ion-fab>
 </ion-content>

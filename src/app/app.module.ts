@@ -2,20 +2,12 @@ import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
-
-import { AboutPage } from '../pages/about/about';
-import { ContactPage } from '../pages/contact/contact';
-import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
-
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { AuthProvider } from '../providers/auth/auth';
 import { LoginPage } from '../pages/login/login';
-
 import { HttpModule } from '@angular/http';
-
-
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
@@ -27,7 +19,9 @@ import { ListPage } from '../pages/list/list';
 import { ProfilePage } from '../pages/profile/profile';
 import { AddPage } from '../pages/add/add';
 import { SettingsPage } from '../pages/settings/settings';
-import { ShowViewPage } from '../pages/show-view/show-view';
+import { AniSearchProvider } from '../providers/ani-search/ani-search';
+import { FirestoreProvider } from '../providers/firestore/firestore';
+import { MediaInfoPage } from '../pages/media-info/media-info';
 
 // AF2 Settings
 const firebaseConfig = {
@@ -42,9 +36,6 @@ const firebaseConfig = {
 @NgModule({
   declarations: [
     MyApp,
-    AboutPage,
-    ContactPage,
-    HomePage,
     TabsPage,
     LoginPage,
     RegisterPage,
@@ -53,7 +44,7 @@ const firebaseConfig = {
     AddPage,
     ProfilePage,
     SettingsPage,
-    ShowViewPage
+    MediaInfoPage
   ],
   imports: [
     BrowserModule,
@@ -68,9 +59,6 @@ const firebaseConfig = {
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    AboutPage,
-    ContactPage,
-    HomePage,
     TabsPage,
     LoginPage,
     RegisterPage,
@@ -79,13 +67,15 @@ const firebaseConfig = {
     AddPage,
     ProfilePage,
     SettingsPage,
-    ShowViewPage
+    MediaInfoPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    AuthProvider
+    AuthProvider,
+    AniSearchProvider,
+    FirestoreProvider,
   ]
 })
 export class AppModule {}

@@ -1,8 +1,4 @@
 import { Component } from '@angular/core';
-
-import { AboutPage } from '../about/about';
-import { ContactPage } from '../contact/contact';
-import { HomePage } from '../home/home';
 import { ListPage } from '../list/list';
 import { AddPage } from '../add/add';
 import { ProfilePage } from '../profile/profile';
@@ -14,10 +10,9 @@ import { ModalController } from 'ionic-angular/components/modal/modal-controller
 })
 export class TabsPage {
 
-  tab1Root = HomePage;
-  tab2Root = ListPage;
-  tab4Root = ProfilePage;
-  tab5Root = SettingsPage;
+  tab1Root = ListPage;
+  tab2Root = ProfilePage;
+  tab3Root = SettingsPage;
 
   constructor(public modalCtrl: ModalController) {
 
