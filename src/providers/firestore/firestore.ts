@@ -30,17 +30,13 @@ export enum FsReturnCodes {
 @Injectable()
 export class FirestoreProvider {
 
-  mediaCollection: any = this.firestore.firestore
-    .collection('users').doc(this.authP.getCurrentUser().uid.toString())
-    .collection('media');
-
   constructor(public http: HttpClient, public firestore: AngularFirestore,
     public authP: AuthProvider) { }
 
   addMedia(data: MediaData): any {
     return new Promise((resolve, reject) => {
       // query to see if duplicate exists
-     this.firestore.firestore.collection('users')
+      this.firestore.firestore.collection('users')
         .doc(this.authP.getCurrentUser().uid.toString())
         .collection('media').where('title', '==', data.title).get()
         .then((res) => {
@@ -81,11 +77,13 @@ export class FirestoreProvider {
   use subscribeAll() instead. */
   getAll(type: MediaType): Promise<[MediaData]> {
     return new Promise((resolve, reject) => {
-      this.mediaCollection.where('type', '==', MediaType[type]).get()
+      this.firestore.firestore
+        .collection('users').doc(this.authP.getCurrentUser().uid.toString())
+        .collection('media').where('type', '==', MediaType[type]).get()
         .then((res) => {
           let arr = [] as [MediaData]; // array to return containing results
           res.forEach((data) => {
-            arr.push(data.data());
+            arr.push(data.data() as MediaData);
           });
           resolve(arr); // send back the list
         }).catch((err) => {
@@ -97,15 +95,22 @@ export class FirestoreProvider {
 
   /* Subscribe live to a list for displaying in real time */
   subscribeAll(type: MediaType): Observable<[MediaData]> {
+    console.log(this.authP.getCurrentUser().uid);
     return new Observable(observer => {
-      this.mediaCollection.where('type', '==', MediaType[type])
+      this.firestore.firestore
+        .collection('users').doc(this.authP.getCurrentUser().uid.toString())
+        .collection('media').where('type', '==', MediaType[type])
         .onSnapshot((snapshot) => {
           var items = [] as [MediaData];
           snapshot.forEach(element => {
-            items.push(element.data());
+            items.push(element.data() as MediaData);
           });
           observer.next(items);
-        });
+        },
+          (err) => {
+            // on error, close the subscription
+            observer.complete();
+          });
       // observer does not end until app close.
     });
   }

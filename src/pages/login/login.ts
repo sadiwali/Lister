@@ -33,7 +33,7 @@ export class LoginPage {
     //this.signInUser();
 
     // debug imdb module
-    
+
 
   }
 
@@ -72,17 +72,22 @@ export class LoginPage {
 
     // attempt to set persistence
     this.authP.setPersistence().then(() => {
-      // do nothing if succeeded
+      this.goIn();
     }).catch(() => {
       this.createToast("Could not set persistence.").present();
+      this.goIn();
     })
     // attempt to sign in
+
+
+  }
+
+  private goIn() {
     this.authP.signInUser(this.user.email, this.user.password).then(() => {
       this.navCtrl.push(TabsPage);
     }).catch((e) => {
       this.authP.handleAuthError(this, e);
     });
-
   }
 
   /* Display the forgot password alert */
@@ -108,7 +113,7 @@ export class LoginPage {
             if (validateEmail(data.email)) {
               this.authP.resetPassword(data.email).then(() => {
                 this.createAlert("Password reset email sent!").present();;
-              }).catch (() => {
+              }).catch(() => {
                 this.createAlert("Could not send password reset email.").present();
               })
             } else {
@@ -135,5 +140,5 @@ export class LoginPage {
 
     modal.present();
   }
-  
+
 }

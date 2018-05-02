@@ -4,7 +4,7 @@ import { MediaInfoPage } from './media-info';
 
 @NgModule({
   declarations: [
-    MediaInfoPage,
+
   ],
   imports: [
     IonicPageModule.forChild(MediaInfoPage),

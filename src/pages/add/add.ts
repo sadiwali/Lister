@@ -40,19 +40,20 @@ export class AddPage {
       duration: duration
     });
   }
-  
+
   createAlert(message: string): any {
     return this.alertCtrl.create({
       title: message, buttons: [{ text: 'Okay' }]
     });
   }
-  
+
   closeModal() {
     this.viewCtrl.dismiss();
   }
-        ionViewDidLoad() {
-          console.log('ionViewDidLoad AddPage');
-        }
+  
+  ionViewDidLoad() {
+    console.log('ionViewDidLoad AddPage');
+  }
 
   /* Search for something */
   search(event: any) {

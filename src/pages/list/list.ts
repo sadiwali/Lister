@@ -27,28 +27,34 @@ export class ListPage {
   myList: any = []; // list storign all content
   error: boolean = false; // could not get list
 
+
+
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public modalCtrl: ModalController, public aniSearch: AniSearchProvider,
     public fireS: FirestoreProvider) {
-  }
 
-  ionViewDidLoad() {
     this.subToLists();
-
   }
+
+  ionViewDidLoad() {  }
 
   subToLists() {
     // subscribe to the media collection of user
     this.fireS.subscribeAll(MediaType.ANIME).subscribe(next => {
       // update the result after every change
       this.myList = next;
-    });
+    },
+      () => {
+        // on complete
+        console.log("no longer listening...");
+        this.myList = [];
+      });
 
   }
 
   /* Open a selected media */
   openMedia(index: number) {
-    this.modalCtrl.create(MediaInfoPage, {data: this.myList[index]}).present();
+    this.modalCtrl.create(MediaInfoPage, { data: this.myList[index] }).present();
   }
 
   /* bring up the add modal */

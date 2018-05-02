@@ -9,9 +9,7 @@ The authentication module handles login, registration, and password reset
 @Injectable()
 export class AuthProvider {
 
-  constructor(public http: HttpClient, public afAuth: AngularFireAuth) {
-
-  }
+  constructor(public http: HttpClient, public afAuth: AngularFireAuth) { }
 
   // sign in user
   signInUser(newEmail: string, newPassword: string): Promise<any> {
@@ -49,7 +47,6 @@ export class AuthProvider {
   signOutUser(context: any): Promise<any> {
     context.navCtrl.popToRoot();
     return this.afAuth.auth.signOut();
-
   }
 
   // authentication change broadcaster
@@ -61,6 +58,8 @@ export class AuthProvider {
   getCurrentUser() {
     return firebase.auth().currentUser;
   }
+
+  
 
   /**
  * Handle all errors thrown bt the Firebase Auth module.
@@ -87,6 +86,5 @@ export class AuthProvider {
       context.createToast(err.message);
     }
   }
-
 
 }
