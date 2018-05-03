@@ -93,6 +93,12 @@ export class FirestoreProvider {
     });
   }
 
+
+  importfromfile(file) {
+    
+  }
+
+
   /* Subscribe live to a list for displaying in real time */
   subscribeAll(type: MediaType = null): Observable<[MediaData]> {
     if (!type) {

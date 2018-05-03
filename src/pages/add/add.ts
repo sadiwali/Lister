@@ -24,7 +24,6 @@ export class AddPage {
 
   query: string = ""; // the search query
   searchResults: any; // list of results to display
-  type: MediaType = MediaType.ANIME; // the search type
   selectedSearchResult: number = -1; // the selected item in list
 
   // from inputs
@@ -66,7 +65,7 @@ export class AddPage {
       return;
     }
     // do the search, then display into list
-    this.aniSearch.search(this.query, this.type).then((res) => {
+    this.aniSearch.search(this.query).then((res) => {
       this.searchResults = res;
       console.log(this.searchResults);
     }).catch((err) => {
@@ -109,7 +108,7 @@ export class AddPage {
       comments: this.comments,
       rating: this.rating,
       watchDate: new Date(),
-      type: MediaType[this.type],
+      type: item.type,
       id: item.id,
       coverImage: {
         medium: item.coverImage.medium,

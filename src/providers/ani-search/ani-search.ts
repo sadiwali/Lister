@@ -10,8 +10,8 @@ import * as imdb from '../../../node_modules/imdb-api';
 
 export enum MediaType {
   ANIME,
-  MOVIE,
   SHOW,
+  MOVIE,
   MANGA
 }
 
@@ -74,14 +74,25 @@ export class AniSearchProvider {
     } else {
       // search all
       console.log("Searching all");
+
       return new Promise((resolve, reject) => {
-        this.searchAni(query).then(data => {
-          this.searchImdb(query).then(iData => {
-            resolve(data.concat(iData));
-          })
-        }).catch (err => {
+        this.searchAni(query).then(aniData => {
+          this.searchImdb(query).then(imdbData => {
+            resolve(aniData.concat(imdbData));
+          }).catch(err => {
+            // could not get from imdb api
+            resolve(aniData); // send back just 
+          });
+        }).catch(err => {
           // searchAni had an issue
-        });
+        }).then(() => {
+          // aniData is not here, so nothing to get
+          this.searchImdb(query).then(imdbData => {
+            resolve(imdbData);
+          }).catch(err => {
+            reject(err);
+          });
+        })
       });
     }
   }
@@ -201,6 +212,7 @@ export class AniSearchProvider {
         }
         media(search: $search, type: $type) {
           id
+          type
           title {
             romaji
             native
@@ -247,7 +259,7 @@ export class AniSearchProvider {
               sr_json.coverImage = (json.data.Page.media[i] as any).coverImage;
               sr_json.startDate = (json.data.Page.media[i] as any).startDate;
               sr_json.source = Api[Api.ANILIST];
-              sr_json.type = MediaType[type];
+              sr_json.type = (json.data.Page.media[i] as any).type;
               arr.push(sr_json);
             }
             resolve(arr); // return the search result array
@@ -297,7 +309,9 @@ export class AniSearchProvider {
         startDate.month = response_date.getMonth();
         sr_json.startDate = startDate;
         sr_json.source = Api[Api.IMDB];
-        sr_json.type = MediaType[type];
+        sr_json.type = (data as any).type.toLowerCase()
+        == 'series' ? MediaType[MediaType.SHOW]
+        : (data as any).type;
         resolve(sr_json);
       }).catch((err) => {
         reject(err);
@@ -333,7 +347,7 @@ export class AniSearchProvider {
             medium: ""
           };
           coverImage.large = (data.results[i] as any).poster;
-          coverImage.medium = null;
+          coverImage.medium = coverImage.large;
           sr_json.coverImage = coverImage;
           // create a skeleton for date
           let startDate = {
@@ -345,7 +359,9 @@ export class AniSearchProvider {
           startDate.year = (data.results[i] as any).year;
           sr_json.startDate = startDate;
           sr_json.source = Api[Api.IMDB];
-          sr_json.type = MediaType[type];
+          sr_json.type = (data.results[i] as any).type.toLowerCase()
+            == 'series' ? MediaType[MediaType.SHOW]
+            : (data.results[i] as any).type;
           arr.push(sr_json);
         }
         resolve(arr);

@@ -7,7 +7,7 @@
 
 
 <ion-content>
-  <ion-searchbar (ionInput)="getItems($event)" placeholder="Search your {{mediaTypes[selectedMediaType]}} list"></ion-searchbar>
+  <ion-searchbar showCancelButton="true" [(ngModel)]="listSearchQuery" (ionInput)="searchList($event)" placeholder="Search your {{mediaTypes[selectedMediaType]}} list" (ionCancel)="this.resetDisplayLists(parseInt(this.selectedMediaType))"></ion-searchbar>
   <ion-segment [(ngModel)]="selectedMediaType">
     <ion-segment-button value="0">
       ANIME ({{myLists[mediaTypes.ANIME].length}})
@@ -21,14 +21,14 @@
   </ion-segment>
   
 
-<div [ngSwitch]="selectedMediaType">
+<div [ngSwitch]="selectedMediaType" style="margin-bottom: 60px;">
 
   
   <ion-list no-lines *ngSwitchCase="0">
     <ion-item text-center *ngIf="myLists[mediaTypes.ANIME].length == 0">
       <p>{{error ? "Could not get your list :(" : "Your list is empty."}}</p>
     </ion-item>    
-    <ion-item-sliding *ngFor="let item of myLists[mediaTypes.ANIME]; let i = index;">
+    <ion-item-sliding *ngFor="let item of myDisplayLists[mediaTypes.ANIME]; let i = index;">
       <ion-item (click)="openMedia(i);">
         <ion-avatar item-start>
           <img style="object-fit: cover;" src="{{item.coverImage.medium}}" />
@@ -37,7 +37,7 @@
           <span style="float:right;">{{item.rating}} stars</span>
         </h2>
         <h3>watched on {{item.watchDate.getDate() + " " + (item.watchDate.getMonth() + 1) + " " + item.watchDate.getFullYear()}}
-          <span style="float: right; opacity: 0.5;">#{{i + 1}}/{{myLists[mediaTypes.ANIME].length}}</span>
+          <span style="float: right; opacity: 0.5;">#{{i + 1}}/{{myDisplayLists[mediaTypes.ANIME].length}}</span>
         </h3>
       </ion-item>
       <ion-item-options side="right">
@@ -53,7 +53,7 @@
       <ion-item text-center *ngIf="myLists[mediaTypes.SHOW].length == 0">
         <p>{{error ? "Could not get your list :(" : "Your list is empty."}}</p>
       </ion-item>    
-      <ion-item-sliding *ngFor="let item of myLists[mediaTypes.SHOW]; let i = index;">
+      <ion-item-sliding *ngFor="let item of myDisplayLists[mediaTypes.SHOW]; let i = index;">
         <ion-item (click)="openMedia(i);">
           <ion-avatar item-start>
             <img style="object-fit: cover;" src="{{item.coverImage.medium}}" />
@@ -62,7 +62,7 @@
             <span style="float:right;">{{item.rating}} stars</span>
           </h2>
           <h3>watched on {{item.watchDate.getDate() + " " + item.watchDate.getMonth() + " " + item.watchDate.getFullYear()}}
-            <span style="float: right; opacity: 0.5;">#{{i + 1}}/{{myLists[mediaTypes.SHOW].length}}</span>
+            <span style="float: right; opacity: 0.5;">#{{i + 1}}/{{myDisplayLists[mediaTypes.SHOW].length}}</span>
           </h3>
         </ion-item>
         <ion-item-options side="right">
@@ -78,7 +78,7 @@
         <ion-item text-center *ngIf="myLists[mediaTypes.MOVIE].length == 0">
           <p>{{error ? "Could not get your list :(" : "Your list is empty."}}</p>
         </ion-item>    
-        <ion-item-sliding *ngFor="let item of myLists[mediaTypes.MOVIE]; let i = index;">
+        <ion-item-sliding *ngFor="let item of myDisplayLists[mediaTypes.MOVIE]; let i = index;">
           <ion-item (click)="openMedia(i);">
             <ion-avatar item-start>
               <img style="object-fit: cover;" src="{{item.coverImage.medium}}" />
@@ -87,7 +87,7 @@
               <span style="float:right;">{{item.rating}} stars</span>
             </h2>
             <h3>watched on {{item.watchDate.getDate() + " " + item.watchDate.getMonth() + " " + item.watchDate.getFullYear()}}
-              <span style="float: right; opacity: 0.5;">#{{i + 1}}/{{myLists[mediaTypes.MOVIE].length}}</span>
+              <span style="float: right; opacity: 0.5;">#{{i + 1}}/{{myDisplayLists[mediaTypes.MOVIE].length}}</span>
             </h3>
           </ion-item>
           <ion-item-options side="right">

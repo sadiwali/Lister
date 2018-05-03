@@ -23,6 +23,7 @@ export class MediaInfoPage {
     public alertCtrl: AlertController, public toastCtrl: ToastController,
     public viewCtrl: ViewController) {
       this.currMediaData = navParams.get('data');
+      console.log(this.currMediaData);
   }
 
   ionViewDidLoad() {

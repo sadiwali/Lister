@@ -23,6 +23,8 @@ export class ListPage {
 
   MAX_TITLE_LEN = MAX_TITLE_LEN;
 
+  listSearchQuery: string;
+
   mediaTypes: any = MediaType; // required for HTML to read MediaType
 
   isListView: boolean = false;
@@ -38,34 +40,49 @@ export class ListPage {
     2: []
   }
 
+  myDisplayLists: any = {
+    0: [],
+    1: [],
+    2: []
+  }
+
   error: boolean = false; // could not get list
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public modalCtrl: ModalController, public aniSearch: AniSearchProvider,
     public fireS: FirestoreProvider) {
-      this.subToLists();
-    }
-    
-    ionViewDidLoad() { 
-      this.selectedMediaType = "anime";
-    }
+    this.subToLists();
+  }
+
+  ionViewDidLoad() {
+    this.selectedMediaType = "anime";
+  }
+
+  ionViewDidEnter() {
+    console.log("enter");
+    this.selectedMediaType = "0";
+
+  }
 
   setList(which: MediaType) {
     let resArr = this.myList.filter(x => x.type.toLowerCase()
       === MediaType[which].toLowerCase());
-    this.myLists[which] = resArr;
+    this.myLists[which] = resArr; // set the main list
+    this.myDisplayLists[which] = resArr; // set the display list also
+    console.log(resArr);
 
   }
 
   private sortList(list: [MediaData]): [MediaData] {
     let res = list.sort(this.compareDates);
+    console.log(list, res);
     return res;
   }
 
   private compareDates(a: MediaData, b: MediaData) {
-    if ((a.watchDate as Date).getMilliseconds() < (b.watchDate as Date).getMilliseconds()) {
+    if ((a.watchDate as Date) < (b.watchDate as Date)) {
       return -1;
-    } else if ((a.watchDate as Date).getMilliseconds() > (b.watchDate as Date).getMilliseconds()) {
+    } else if ((a.watchDate as Date) > (b.watchDate as Date)) {
       return 1;
     } else {
       return 0;
@@ -90,11 +107,28 @@ export class ListPage {
 
   }
 
+  /* Search the current list */
+  searchList(event: any) {
+    if (this.listSearchQuery && this.listSearchQuery.length >= 3) {
+      // something to search for
+      let resArr = this.myLists[parseInt(this.selectedMediaType)]
+        .filter(x => x.title.toLowerCase()
+          .includes(this.listSearchQuery.toLowerCase()));
+
+      this.myDisplayLists[this.selectedMediaType] = resArr;
+    } else {
+      // reset the list, nothing to search for
+      this.resetDisplayLists(parseInt(this.selectedMediaType));
+    }
+  }
+
+  resetDisplayLists(which: number) {
+    this.myDisplayLists[which] = this.myLists[which];
+  }
+
   /* Open a selected media */
   openMedia(index: number) {
-
-    console.log(this.selectedMediaType);
-    this.modalCtrl.create(MediaInfoPage, { data: this.myLists[parseInt(this.selectedMediaType)][index] }).present();
+    this.modalCtrl.create(MediaInfoPage, { data: this.myDisplayLists[parseInt(this.selectedMediaType)][index] }).present();
   }
 
   /* bring up the add modal */
