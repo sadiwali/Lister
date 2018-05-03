@@ -1,11 +1,10 @@
 page-media-info {
 
     .cover_image {
-        background-image: url("../../assets/imgs/1304.jpg");
         position: relative;
         height: 200px;
         width: 100%;
-        background-size: contain;
+        background-size: cover;
         background-repeat: no-repeat;
         background-attachment: fixed;
         filter: brightness(50%);

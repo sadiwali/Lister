@@ -6,33 +6,99 @@
 -->
 
 
-<ion-header>
-
-  <ion-navbar>
-    <ion-title>My List</ion-title>
-  </ion-navbar>
-
-</ion-header>
-
-
 <ion-content>
-  <ion-list>
-    <ion-item text-center *ngIf="myList.length == 0">
-      <p>{{error ? "Could not get your list :(" : "Your list is empty."}}</p>
-    </ion-item>
-    <ion-item no-lines *ngFor="let item of myList; let i = index;" (click)="openMedia(i);">
-      <ion-avatar item-start>
-        <img style="object-fit: cover;" src="{{item.coverImage.medium}}" />
-      </ion-avatar>
-      <h2>{{item.title.length > MAX_TITLE_LEN ? item.title.substring(0, MAX_TITLE_LEN) + "..." : item.title}}
-        <span style="float:right;">{{item.rating}} stars</span>
-      </h2>
-      <h3>watched on {{item.watchDate.getDate() + " " + item.watchDate.getMonth() + " " + item.watchDate.getFullYear()}}
-        <span style="float: right; opacity: 0.5;">#{{i + 1}}/{{myList.length}}</span>
-      </h3>
-    </ion-item>
+  <ion-searchbar (ionInput)="getItems($event)" placeholder="Search your {{mediaTypes[selectedMediaType]}} list"></ion-searchbar>
+  <ion-segment [(ngModel)]="selectedMediaType">
+    <ion-segment-button value="0">
+      ANIME ({{myLists[mediaTypes.ANIME].length}})
+    </ion-segment-button>
+    <ion-segment-button value="1">
+      SHOWS ({{myLists[mediaTypes.SHOW].length}})
+    </ion-segment-button>
+    <ion-segment-button value="2">
+      MOVIES ({{myLists[mediaTypes.MOVIE].length}})
+    </ion-segment-button>
+  </ion-segment>
+  
 
+<div [ngSwitch]="selectedMediaType">
+
+  
+  <ion-list no-lines *ngSwitchCase="0">
+    <ion-item text-center *ngIf="myLists[mediaTypes.ANIME].length == 0">
+      <p>{{error ? "Could not get your list :(" : "Your list is empty."}}</p>
+    </ion-item>    
+    <ion-item-sliding *ngFor="let item of myLists[mediaTypes.ANIME]; let i = index;">
+      <ion-item (click)="openMedia(i);">
+        <ion-avatar item-start>
+          <img style="object-fit: cover;" src="{{item.coverImage.medium}}" />
+        </ion-avatar>
+        <h2>{{item.title.length > MAX_TITLE_LEN ? item.title.substring(0, MAX_TITLE_LEN) + "..." : item.title}}
+          <span style="float:right;">{{item.rating}} stars</span>
+        </h2>
+        <h3>watched on {{item.watchDate.getDate() + " " + (item.watchDate.getMonth() + 1) + " " + item.watchDate.getFullYear()}}
+          <span style="float: right; opacity: 0.5;">#{{i + 1}}/{{myLists[mediaTypes.ANIME].length}}</span>
+        </h3>
+      </ion-item>
+      <ion-item-options side="right">
+        <button ion-button color="primary" (click)="share(i)">
+          <ion-icon name="share"></ion-icon>
+          Share
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
   </ion-list>
+
+  <ion-list no-lines *ngSwitchCase="1">
+      <ion-item text-center *ngIf="myLists[mediaTypes.SHOW].length == 0">
+        <p>{{error ? "Could not get your list :(" : "Your list is empty."}}</p>
+      </ion-item>    
+      <ion-item-sliding *ngFor="let item of myLists[mediaTypes.SHOW]; let i = index;">
+        <ion-item (click)="openMedia(i);">
+          <ion-avatar item-start>
+            <img style="object-fit: cover;" src="{{item.coverImage.medium}}" />
+          </ion-avatar>
+          <h2>{{item.title.length > MAX_TITLE_LEN ? item.title.substring(0, MAX_TITLE_LEN) + "..." : item.title}}
+            <span style="float:right;">{{item.rating}} stars</span>
+          </h2>
+          <h3>watched on {{item.watchDate.getDate() + " " + item.watchDate.getMonth() + " " + item.watchDate.getFullYear()}}
+            <span style="float: right; opacity: 0.5;">#{{i + 1}}/{{myLists[mediaTypes.SHOW].length}}</span>
+          </h3>
+        </ion-item>
+        <ion-item-options side="right">
+          <button ion-button color="primary" (click)="share(i)">
+            <ion-icon name="share"></ion-icon>
+            Share
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
+    <ion-list no-lines *ngSwitchCase="2">
+        <ion-item text-center *ngIf="myLists[mediaTypes.MOVIE].length == 0">
+          <p>{{error ? "Could not get your list :(" : "Your list is empty."}}</p>
+        </ion-item>    
+        <ion-item-sliding *ngFor="let item of myLists[mediaTypes.MOVIE]; let i = index;">
+          <ion-item (click)="openMedia(i);">
+            <ion-avatar item-start>
+              <img style="object-fit: cover;" src="{{item.coverImage.medium}}" />
+            </ion-avatar>
+            <h2>{{item.title.length > MAX_TITLE_LEN ? item.title.substring(0, MAX_TITLE_LEN) + "..." : item.title}}
+              <span style="float:right;">{{item.rating}} stars</span>
+            </h2>
+            <h3>watched on {{item.watchDate.getDate() + " " + item.watchDate.getMonth() + " " + item.watchDate.getFullYear()}}
+              <span style="float: right; opacity: 0.5;">#{{i + 1}}/{{myLists[mediaTypes.MOVIE].length}}</span>
+            </h3>
+          </ion-item>
+          <ion-item-options side="right">
+            <button ion-button color="primary" (click)="share(i)">
+              <ion-icon name="share"></ion-icon>
+              Share
+            </button>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+</div>
   <ion-fab right bottom>
     <button (click)="addItem();" ion-fab color="light">
       <ion-icon name="add"></ion-icon>

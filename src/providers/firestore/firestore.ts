@@ -94,25 +94,42 @@ export class FirestoreProvider {
   }
 
   /* Subscribe live to a list for displaying in real time */
-  subscribeAll(type: MediaType): Observable<[MediaData]> {
-    console.log(this.authP.getCurrentUser().uid);
-    return new Observable(observer => {
-      this.firestore.firestore
-        .collection('users').doc(this.authP.getCurrentUser().uid.toString())
-        .collection('media').where('type', '==', MediaType[type])
-        .onSnapshot((snapshot) => {
-          var items = [] as [MediaData];
-          snapshot.forEach(element => {
-            items.push(element.data() as MediaData);
-          });
-          observer.next(items);
-        },
-          (err) => {
-            // on error, close the subscription
-            observer.complete();
-          });
-      // observer does not end until app close.
-    });
+  subscribeAll(type: MediaType = null): Observable<[MediaData]> {
+    if (!type) {
+      return new Observable(observer => {
+        this.firestore.firestore
+          .collection('users').doc(this.authP.getCurrentUser().uid.toString())
+          .collection('media').onSnapshot(snapshot => {
+            var items = [] as [MediaData];
+            snapshot.forEach(element => {
+              items.push(element.data() as MediaData);
+            });
+            observer.next(items);
+          },
+            (err) => {
+              // on error, close the subscription
+              observer.complete();
+            });
+        // observer does not end until app close.
+      });
+    } else {
+      return new Observable(observer => {
+        this.firestore.firestore
+          .collection('users').doc(this.authP.getCurrentUser().uid.toString())
+          .collection('media').where('type', '==', MediaType[type])
+          .onSnapshot((snapshot) => {
+            var items = [] as [MediaData];
+            snapshot.forEach(element => {
+              items.push(element.data() as MediaData);
+            });
+            observer.next(items);
+          },
+            (err) => {
+              // on error, close the subscription
+              observer.complete();
+            });
+        // observer does not end until app close.
+      });
+    }
   }
-
 }

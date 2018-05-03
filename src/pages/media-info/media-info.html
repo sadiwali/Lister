@@ -23,8 +23,11 @@
 <ion-content>
 
 
-  <div class="cover_image"></div>
+  <div [ngStyle]="{'background-image': 'url(' + currMediaData.coverImage.large + ')'}" class="cover_image"></div>
   <ion-list no-lines>
+    <ion-item>
+      <p>{{currMediaData.title}}</p>
+    </ion-item>
     <ion-item>
       <h1>rated {{currMediaData.rating}}/10</h1>
     </ion-item>

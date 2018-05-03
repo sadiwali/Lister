@@ -29,7 +29,7 @@
           <img style="object-fit: cover;" src="{{item.coverImage.medium}}">
         </ion-avatar>
         <h2>{{item.title}}</h2>
-        <h3>{{item.startDate.year}}</h3>
+        <h3><i style="color:gray;">({{item.type}})</i> - {{item.startDate.year}}</h3>
       </ion-item>
 
     </ion-list>
@@ -39,6 +39,9 @@
   <ion-list>
 
 
+    <ion-item text-center *ngIf="selectedSearchResult >= 0;">
+      <h1>{{searchResults[selectedSearchResult].title.length > MAX_TITLE_LEN ? searchResults[selectedSearchResult].title.substring(0, MAX_TITLE_LEN) + "..." : searchResults[selectedSearchResult].title}}</h1>
+    </ion-item>
     <ion-item>
       <ion-input [(ngModel)]="comments" placeholder="Comments..."></ion-input>
     </ion-item>

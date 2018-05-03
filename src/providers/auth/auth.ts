@@ -18,7 +18,7 @@ export class AuthProvider {
 
   setPersistence() {
     return new Promise((resolve, reject) => {
-      this.afAuth.auth.setPersistence("local").then(() => {
+      this.afAuth.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
         resolve();
       }).catch(() => {
         reject();
@@ -59,7 +59,7 @@ export class AuthProvider {
     return firebase.auth().currentUser;
   }
 
-  
+
 
   /**
  * Handle all errors thrown bt the Firebase Auth module.

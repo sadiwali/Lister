@@ -4,6 +4,7 @@ import { ViewController } from 'ionic-angular/navigation/view-controller';
 import { MediaType, AniSearchProvider } from '../../providers/ani-search/ani-search';
 import { AuthProvider } from '../../providers/auth/auth';
 import { MediaData, FirestoreProvider, FsReturnCodes } from '../../providers/firestore/firestore';
+import { MAX_TITLE_LEN } from '../list/list';
 
 /**
  * Generated class for the AddPage page.
@@ -18,6 +19,8 @@ import { MediaData, FirestoreProvider, FsReturnCodes } from '../../providers/fir
   templateUrl: 'add.html',
 })
 export class AddPage {
+
+  MAX_TITLE_LEN = MAX_TITLE_LEN;
 
   query: string = ""; // the search query
   searchResults: any; // list of results to display
