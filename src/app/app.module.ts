@@ -22,6 +22,7 @@ import { SettingsPage } from '../pages/settings/settings';
 import { AniSearchProvider } from '../providers/ani-search/ani-search';
 import { FirestoreProvider } from '../providers/firestore/firestore';
 import { MediaInfoPage } from '../pages/media-info/media-info';
+import { MediaInfoPopoverPage } from '../pages/media-info-popover/media-info-popover';
 
 // AF2 Settings
 const firebaseConfig = {
@@ -44,7 +45,8 @@ const firebaseConfig = {
     AddPage,
     ProfilePage,
     SettingsPage,
-    MediaInfoPage
+    MediaInfoPage,
+    MediaInfoPopoverPage
   ],
   imports: [
     BrowserModule,
@@ -67,7 +69,8 @@ const firebaseConfig = {
     AddPage,
     ProfilePage,
     SettingsPage,
-    MediaInfoPage
+    MediaInfoPage,
+    MediaInfoPopoverPage
   ],
   providers: [
     StatusBar,

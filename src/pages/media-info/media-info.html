@@ -11,7 +11,7 @@
       <ion-icon name="arrow-back"></ion-icon>
     </button>
     <ion-buttons end>
-      <button ion-button icon-only>
+      <button ion-button icon-only (click)="presentPopover($event);">
         <ion-icon name="more"></ion-icon>
       </button>
     </ion-buttons>
@@ -24,7 +24,7 @@
 
 
   <div [ngStyle]="{'background-image': 'url(' + currMediaData.coverImage.large + ')'}" class="cover_image"></div>
-  <ion-list no-lines>
+  <ion-list no-lines text-wrap>
     <ion-item>
       <p>{{currMediaData.title}}</p>
     </ion-item>

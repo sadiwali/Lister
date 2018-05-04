@@ -21,36 +21,98 @@
 
   <ion-searchbar [(ngModel)]="query" [showCancelButton]="true" (ionInput)="search($event);" (ionCancel)="search(null);">
   </ion-searchbar>
-  <ion-content style="max-height: 500px; height: 400px;">
+  <ion-segment [(ngModel)]="selectedMediaType">
 
-    <ion-list>
-      <ion-item no-lines [ngClass]="(i == selectedSearchResult) ? 'selected' : ''" *ngFor="let item of searchResults; let i = index" (click)="selectSearchResult(i);">
-        <ion-avatar item-start>
-          <img style="object-fit: cover;" src="{{item.coverImage.medium}}">
-        </ion-avatar>
-        <h2>{{item.title}}</h2>
-        <h3><i style="color:gray;">({{item.type}})</i> - {{item.startDate.year}} - {{item.source}}</h3>
-      </ion-item>
+    <ion-segment-button value="3">
+      ALL
+    </ion-segment-button>
+    <ion-segment-button value="0">
+      ANIME
+    </ion-segment-button>
+    <ion-segment-button value="1">
+      SHOWS
+    </ion-segment-button>
+    <ion-segment-button value="2">
+      MOVIES
+    </ion-segment-button>
+  </ion-segment>
+  <ion-content style="max-height: 400px; height: 300px;">
 
-    </ion-list>
+    <div [ngSwitch]="selectedMediaType">
+      <ion-list *ngSwitchCase="3">
+
+        <ion-item no-lines [ngClass]="(i == selectedSearchResult) ? 'selected' : ''" *ngFor="let item of searchResults; let i = index"
+          (click)="selectSearchResult(i);">
+          <ion-avatar item-start>
+            <img style="object-fit: cover;" src="{{item.coverImage.medium}}">
+          </ion-avatar>
+          <h2>{{item.title}}</h2>
+          <h3>
+            <i style="color:gray;">({{item.type.toLowerCase()}})</i> - {{item.startDate.year}} - {{item.source}}</h3>
+        </ion-item>
+
+      </ion-list>
+
+      <ion-list *ngSwitchCase="0">
+
+        <ion-item no-lines [ngClass]="(i == selectedSearchResult) ? 'selected' : ''" *ngFor="let item of filteredSearchResults[0]; let i = index"
+          (click)="selectSearchResult(i);">
+          <ion-avatar item-start>
+            <img style="object-fit: cover;" src="{{item.coverImage.medium}}">
+          </ion-avatar>
+          <h2>{{item.title}}</h2>
+          <h3>
+            <i style="color:gray;">({{item.type.toLowerCase()}})</i> - {{item.startDate.year}} - {{item.source}}</h3>
+        </ion-item>
+
+      </ion-list>
+
+      <ion-list *ngSwitchCase="1">
+
+        <ion-item no-lines [ngClass]="(i == selectedSearchResult) ? 'selected' : ''" *ngFor="let item of filteredSearchResults[1]; let i = index"
+          (click)="selectSearchResult(i);">
+          <ion-avatar item-start>
+            <img style="object-fit: cover;" src="{{item.coverImage.medium}}">
+          </ion-avatar>
+          <h2>{{item.title}}</h2>
+          <h3>
+            <i style="color:gray;">({{item.type.toLowerCase()}})</i> - {{item.startDate.year}} - {{item.source}}</h3>
+        </ion-item>
+
+      </ion-list>
+
+      <ion-list *ngSwitchCase="2">
+
+        <ion-item no-lines [ngClass]="(i == selectedSearchResult) ? 'selected' : ''" *ngFor="let item of filteredSearchResults[2]; let i = index"
+          (click)="selectSearchResult(i);">
+          <ion-avatar item-start>
+            <img style="object-fit: cover;" src="{{item.coverImage.medium}}">
+          </ion-avatar>
+          <h2>{{item.title}}</h2>
+          <h3>
+            <i style="color:gray;">({{item.type.toLowerCase()}})</i> - {{item.startDate.year}} - {{item.source}}</h3>
+        </ion-item>
+
+      </ion-list>
+    </div>
   </ion-content>
 
 
   <ion-list>
 
-
     <ion-item text-center *ngIf="selectedSearchResult >= 0;">
-      <h1>{{searchResults[selectedSearchResult].title.length > MAX_TITLE_LEN ? searchResults[selectedSearchResult].title.substring(0, MAX_TITLE_LEN) + "..." : searchResults[selectedSearchResult].title}}</h1>
+      <h1>{{searchResults[selectedSearchResult].title.length > MAX_TITLE_LEN ? searchResults[selectedSearchResult].title.substring(0,
+        MAX_TITLE_LEN) + "..." : searchResults[selectedSearchResult].title}}</h1>
     </ion-item>
     <ion-item>
-      <ion-input [(ngModel)]="comments" placeholder="Comments..."></ion-input>
+      <ion-textarea [(ngModel)]="comments" placeholder="Comments..."></ion-textarea>
     </ion-item>
 
     <ion-item>
-      <ion-label>your rating {{rating ? "is a " + rating : ""}}</ion-label>
+      <ion-label>Your rating {{rating ? "is a " + rating : ""}}</ion-label>
       <ion-range [(ngModel)]="rating" type="number" min="0" max="10" step="1" snaps="true" pin="true">
-          <ion-label range-left>0</ion-label>
-          <ion-label range-right>10</ion-label>
+        <ion-label range-left>0</ion-label>
+        <ion-label range-right>10</ion-label>
       </ion-range>
     </ion-item>
 

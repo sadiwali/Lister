@@ -23,7 +23,17 @@ export class AddPage {
   MAX_TITLE_LEN = MAX_TITLE_LEN;
 
   query: string = ""; // the search query
-  searchResults: any; // list of results to display
+  searchResults: any = []; // list of results to display
+
+  selectedMediaType: string;
+
+  filteredSearchResults: any = {
+    0: [],
+    1: [],
+    2: [],
+    3: []
+  }
+
   selectedSearchResult: number = -1; // the selected item in list
 
   // from inputs
@@ -34,6 +44,10 @@ export class AddPage {
     public viewCtrl: ViewController, public aniSearch: AniSearchProvider,
     public toastCtrl: ToastController, public alertCtrl: AlertController,
     public fireS: FirestoreProvider, public authP: AuthProvider) {
+  }
+
+  filterResults(type: MediaType) {
+    this.filteredSearchResults[type] = this.searchResults.filter(x => x.type.toLowerCase() == MediaType[type].toLowerCase());
   }
 
   createToast(message: string, duration = 3000): any {
@@ -52,13 +66,14 @@ export class AddPage {
   closeModal() {
     this.viewCtrl.dismiss();
   }
-  
+
   ionViewDidLoad() {
     console.log('ionViewDidLoad AddPage');
   }
 
   /* Search for something */
   search(event: any) {
+    this.selectedMediaType = "3"; // select ALL by default
     if (event == null) {
       // clear
       this.searchResults = [];
@@ -67,6 +82,10 @@ export class AddPage {
     // do the search, then display into list
     this.aniSearch.search(this.query).then((res) => {
       this.searchResults = res;
+      this.filterResults(MediaType.ANIME);
+      this.filterResults(MediaType.SHOW);
+      this.filterResults(MediaType.MOVIE);
+
       console.log(this.searchResults);
     }).catch((err) => {
       console.log(err);

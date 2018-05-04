@@ -95,9 +95,28 @@ export class FirestoreProvider {
 
 
   importfromfile(file) {
-    
+
   }
 
+
+  /* delete a record from a collection  */
+  delete(id: string) {
+    return new Promise((resolve, reject) => {
+      this.firestore.firestore.collection('users')
+        .doc(this.authP.getCurrentUser().uid.toString())
+        .collection('media').where('id', '==', id).get().then(data => {
+          let docId = data.docs[0].id; // there should only be one
+          // delete the doc
+          this.firestore.firestore.collection('users')
+            .doc(this.authP.getCurrentUser().uid.toString())
+            .collection('media').doc(docId).delete()
+            .then(() => resolve()).catch(() => reject());
+        }).catch(err => {
+          console.log(err);
+          reject();
+        })
+    });
+  }
 
   /* Subscribe live to a list for displaying in real time */
   subscribeAll(type: MediaType = null): Observable<[MediaData]> {

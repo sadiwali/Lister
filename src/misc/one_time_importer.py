@@ -1,3 +1,4 @@
+import json
 
 content = None
 with open('shows.txt') as f:
