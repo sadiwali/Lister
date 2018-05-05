@@ -4,7 +4,7 @@ import { MediaInfoPopoverPage } from './media-info-popover';
 
 @NgModule({
   declarations: [
-    MediaInfoPopoverPage,
+
   ],
   imports: [
     IonicPageModule.forChild(MediaInfoPopoverPage),
