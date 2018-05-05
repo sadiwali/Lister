@@ -66,6 +66,28 @@ export class FirestoreProvider {
     });
   }
 
+  /* update the media */
+  updateMedia(id: string, newData: any) {
+    return new Promise((resolve, reject) => {
+      this.firestore.firestore.collection('users')
+        .doc(this.authP.getCurrentUser().uid.toString()).collection('media')
+        .where('id', '==', id).get().then(res => {
+          let docId = res.docs[0].id;
+          this.firestore.firestore.collection('users')
+            .doc(this.authP.getCurrentUser().uid.toString()).collection('media')
+            .doc(docId).set(newData, { merge: true }).then(() => {
+              resolve()
+            }).catch(() => {
+              reject();
+            })
+        }).catch(err => {
+          console.log('dd');
+          reject();
+        });
+    });
+  }
+
+
   /* Add given data to the database as a show, anime, movie, etc. */
   private addToDatabase(data: MediaData): Promise<any> {
     return this.firestore.collection('users')

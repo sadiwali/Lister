@@ -22,6 +22,8 @@ export class AddPage {
 
   MAX_TITLE_LEN = MAX_TITLE_LEN;
 
+  searching: boolean = false;
+
   query: string = ""; // the search query
   searchResults: any = []; // list of results to display
 
@@ -72,20 +74,31 @@ export class AddPage {
   }
 
   /* Search for something */
-  search(event: any) {
-    this.selectedMediaType = "3"; // select ALL by default
-    if (event == null) {
+  search() {
+    this.selectedMediaType = "4"; // select ALL by default
+    if (!this.query || this.query.length <= 3) {
       // clear
+      console.log("clearing");
       this.searchResults = [];
+      this.filteredSearchResults = {
+        0: [],
+        1: [],
+        2: [],
+        3: []
+      };
       return;
     }
+    
+    this.searching = true;
     // do the search, then display into list
     this.aniSearch.search(this.query).then((res) => {
       this.searchResults = res;
       this.filterResults(MediaType.ANIME);
+      this.filterResults(MediaType.MANGA);
       this.filterResults(MediaType.SHOW);
       this.filterResults(MediaType.MOVIE);
-
+      // no need for a ENTIRE filtering because just use original big list
+      this.searching = false;
       console.log(this.searchResults);
     }).catch((err) => {
       console.log(err);

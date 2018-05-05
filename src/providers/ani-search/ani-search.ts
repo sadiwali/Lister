@@ -12,7 +12,8 @@ export enum MediaType {
   ANIME,
   SHOW,
   MOVIE,
-  MANGA
+  MANGA,
+  ENTIRE
 }
 
 export enum Api {

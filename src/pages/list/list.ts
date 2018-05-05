@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ModalController, AlertController, ToastController } from 'ionic-angular';
 import { AddPage } from '../add/add';
 import { AniSearchProvider } from '../../providers/ani-search/ani-search';
 import { MediaType } from '../../providers/ani-search/ani-search';
-import { FirestoreProvider, MediaData } from '../../providers/firestore/firestore';
+import { FirestoreProvider, MediaData, FsReturnCodes } from '../../providers/firestore/firestore';
 import { MediaInfoPage } from '../media-info/media-info';
 
 /**
@@ -37,36 +37,58 @@ export class ListPage {
   myLists: any = {
     0: [],
     1: [],
-    2: []
+    2: [],
+    3: [],
+    4: []
   }
 
   myDisplayLists: any = {
     0: [],
     1: [],
-    2: []
+    2: [],
+    3: [],
+    4: []
   }
 
   error: boolean = false; // could not get list
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public modalCtrl: ModalController, public aniSearch: AniSearchProvider,
-    public fireS: FirestoreProvider) {
+    public fireS: FirestoreProvider, public alertCtrl: AlertController,
+    public toastCtrl: ToastController) {
     this.subToLists();
-  }
-
-  ionViewDidLoad() {
-    this.selectedMediaType = "anime";
   }
 
   ionViewDidEnter() {
     console.log("enter");
-    this.selectedMediaType = "0";
-
+    this.selectedMediaType = "4";
   }
 
+  createToast(message: string, duration = 3000): any {
+    return this.toastCtrl.create({
+      message,
+      duration: duration
+    });
+  }
+
+  createAlert(message: string): any {
+    return this.alertCtrl.create({
+      title: message, buttons: [{ text: 'Okay' }]
+    });
+  }
+
+
   setList(which: MediaType) {
-    let resArr = this.myList.filter(x => x.type.toLowerCase()
-      === MediaType[which].toLowerCase());
+    let resArr;
+
+    if (which == MediaType.ENTIRE) {
+      // everything goes into this list
+      resArr = this.myList;
+    } else {
+      resArr = this.myList.filter(x => x.type.toLowerCase()
+        === MediaType[which].toLowerCase());
+    }
+
     this.myLists[which] = resArr; // set the main list
     this.myDisplayLists[which] = resArr; // set the display list also
     console.log(resArr);
@@ -96,15 +118,17 @@ export class ListPage {
       this.myList = this.sortList(next);
       console.log(this.myList);
       this.setList(MediaType.ANIME);
+      this.setList(MediaType.MANGA);
       this.setList(MediaType.SHOW);
       this.setList(MediaType.MOVIE);
+      // this is different because searching this list filters it
+      this.setList(MediaType.ENTIRE);
     },
       () => {
         // on complete
         console.log("no longer listening...");
         this.myList = [];
       });
-
   }
 
   /* Search the current list */
@@ -139,6 +163,60 @@ export class ListPage {
   share(index: number) {
 
   }
+
+  promptDelete(index: number) {
+    // prompt for deletion
+    console.log(index);
+    this.alertCtrl.create({
+      title: 'Are you sure?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Delete',
+          handler: () => {
+            this.delete(index);
+          }
+        }
+      ]
+    }).present();
+  }
+
+  private delete(index: number) {
+    console.log(index);
+    let deletingObj = this.myDisplayLists[parseInt(this.selectedMediaType)][index];
+    console.log(deletingObj);
+    this.fireS.delete(deletingObj.id).then(() => {
+      let toast = this.toastCtrl.create({
+        message: "Deleted " + deletingObj.title,
+        duration: 5000,
+        showCloseButton: true,
+        closeButtonText: "UNDO"
+      });
+
+      toast.onDidDismiss((data, role) => {
+        if (role == "close") {
+          this.fireS.addMedia(deletingObj).then(code => {
+            // added back okay
+          }).catch(err => {
+            // could not redo the last action
+            if (err == FsReturnCodes.ERROR) {
+              this.createAlert("Could not undo your deletion. Please add it back manually...").present();
+              this.modalCtrl.create(AddPage).present();
+            }
+          })
+        }
+      });
+
+      toast.present();
+    }).catch(() => {
+      this.createToast("Could not delete " + deletingObj.title).present();
+    });
+  }
+
+
 
 
 }

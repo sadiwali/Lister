@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
 import firebase from 'firebase/app';
 import { Observable } from 'rxjs/Observable';
+import { Persistence } from '@firebase/auth-types';
 /*
 The authentication module handles login, registration, and password reset
 */
@@ -16,11 +17,23 @@ export class AuthProvider {
     return this.afAuth.auth.signInWithEmailAndPassword(newEmail, newPassword);
   }
 
-  setPersistence() {
+  private setPersistence(persistence: Persistence) {
     return new Promise((resolve, reject) => {
-      this.afAuth.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
+      this.afAuth.auth.setPersistence(persistence).then(() => {
         resolve();
       }).catch(() => {
+        reject();
+      });
+    });
+  }
+
+  /* Set persistence based on really */
+  rememberUser(really: boolean): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.setPersistence(really ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION).then(() => {
+        resolve();
+      }).catch(() => {
+        // could not set, it is the old state, no need to change this.remembers
         reject();
       });
     });
@@ -55,8 +68,13 @@ export class AuthProvider {
   }
 
   // get the current user
-  getCurrentUser() {
-    return firebase.auth().currentUser;
+  getCurrentUser(offline: boolean = false) {
+    if (offline) {
+      return {
+        uid: 4343434
+      }
+    }
+    return this.afAuth.auth.currentUser;
   }
 
 

@@ -4,16 +4,55 @@
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<ion-header>
-
-  <ion-navbar>
-    <ion-title>Settings</ion-title>
-  </ion-navbar>
-
-</ion-header>
 
 
 <ion-content padding>
-  <button ion-button (click)="logout();">LOGOUT</button>
+
+  <ion-list>
+    <ion-item>
+      <button ion-button clear full (click)="version();">
+        <ion-item>
+          Version 1.0
+        </ion-item>
+      </button>
+    </ion-item>
+    
+    <ion-item>
+      <button ion-button clear full (click)="terms();">
+        <ion-item>
+          Terms
+          <ion-icon name="paper" item-end></ion-icon>
+        </ion-item>
+      </button>
+    </ion-item>
+    
+
+    <ion-item>
+      <button ion-button clear full (click)="version();">
+        <ion-item>
+          Rate!
+          <ion-icon name="star-outline" item-end></ion-icon>
+        </ion-item>
+      </button>
+    </ion-item>
+
+    <ion-item>
+        <button ion-button clear full (click)="version();">
+          <ion-item>
+            Download your lists
+            <ion-icon name="cloud-download" item-end></ion-icon>
+          </ion-item>
+        </button>
+      </ion-item>
+
+    <ion-item>
+      <button ion-button clear full (click)="logout();">
+        <ion-item>
+          Logout
+          <ion-icon color="danger" name="exit" item-end></ion-icon>
+        </ion-item>
+      </button>
+    </ion-item>
+  </ion-list>
 
 </ion-content>

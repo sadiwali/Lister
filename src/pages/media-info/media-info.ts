@@ -57,11 +57,11 @@ export class MediaInfoPage {
     moreInfoPop.onDidDismiss(data => {
       if (data == miReturnCode.DELETED) {
         this.createToast("Deleted " + this.currMediaData.title).present();
-        this.closeModal();
       } else if (data == miReturnCode.ERROR) {
         this.createToast("Please try that again.").present();
       }
-    })
+      this.closeModal();
+    });
 
     moreInfoPop.present({
       ev: event

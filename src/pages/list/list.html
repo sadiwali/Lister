@@ -7,11 +7,17 @@
 
 
 <ion-content>
-  <ion-searchbar showCancelButton="true" [(ngModel)]="listSearchQuery" (ionInput)="searchList($event)" placeholder="Search your {{mediaTypes[selectedMediaType]}} list"
-    (ionCancel)="this.resetDisplayLists(parseInt(this.selectedMediaType))"></ion-searchbar>
+  <ion-searchbar showCancelButton="true" [(ngModel)]="listSearchQuery" (ionInput)="searchList()" placeholder="Search your {{mediaTypes[selectedMediaType]}} list"
+    (ionCancel)="this.resetDisplayLists(this.selectedMediaType)"></ion-searchbar>
   <ion-segment [(ngModel)]="selectedMediaType">
+    <ion-segment-button value="4">
+      ALL ({{myList.length}})
+    </ion-segment-button>
     <ion-segment-button value="0">
       ANIME ({{myLists[mediaTypes.ANIME].length}})
+    </ion-segment-button>
+    <ion-segment-button value="3">
+      MANGA ({{myLists[mediaTypes.MANGA].length}})
     </ion-segment-button>
     <ion-segment-button value="1">
       SHOWS ({{myLists[mediaTypes.SHOW].length}})
@@ -24,6 +30,35 @@
 
   <div [ngSwitch]="selectedMediaType" style="margin-bottom: 60px;">
 
+    <ion-list no-lines *ngSwitchCase="4">
+      <ion-item text-center *ngIf="myLists[mediaTypes.ENTIRE].length == 0">
+        <p>{{error ? "Could not get your list :(" : "Your list is empty."}}</p>
+      </ion-item>
+      <ion-item-sliding *ngFor="let item of myDisplayLists[mediaTypes.ENTIRE]; let i = index;">
+        <ion-item (click)="openMedia(i);">
+          <ion-avatar item-start>
+            <img style="object-fit: cover;" src="{{item.coverImage.medium}}" />
+          </ion-avatar>
+          <h2>{{item.title.length > MAX_TITLE_LEN ? item.title.substring(0, MAX_TITLE_LEN) + "..." : item.title}}
+            <span style="float:right;">{{item.rating}} stars</span>
+          </h2>
+          <h3>watched on {{item.watchDate.getDate() + "-" + (item.watchDate.getMonth() + 1) + "-" + item.watchDate.getFullYear()}}
+            - ({{item.type.toLowerCase()}})
+            <span style="float: right; opacity: 0.5;">#{{i + 1}}/{{myDisplayLists[mediaTypes.ENTIRE].length}}</span>
+          </h3>
+        </ion-item>
+        <ion-item-options side="right">
+          <button ion-button color="dark" (click)="share(i)">
+            <ion-icon name="share"></ion-icon>
+            Share
+          </button>
+          <button ion-button color="danger" (click)="promptDelete(i)">
+            <ion-icon name="trash"></ion-icon>
+            Delete
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
 
     <ion-list no-lines *ngSwitchCase="0">
       <ion-item text-center *ngIf="myLists[mediaTypes.ANIME].length == 0">
@@ -37,14 +72,48 @@
           <h2>{{item.title.length > MAX_TITLE_LEN ? item.title.substring(0, MAX_TITLE_LEN) + "..." : item.title}}
             <span style="float:right;">{{item.rating}} stars</span>
           </h2>
-          <h3>watched on {{item.watchDate.getDate() + " " + (item.watchDate.getMonth() + 1) + " " + item.watchDate.getFullYear()}}
+          <h3>watched on {{item.watchDate.getDate() + "-" + (item.watchDate.getMonth() + 1) + "-" + item.watchDate.getFullYear()}}
             <span style="float: right; opacity: 0.5;">#{{i + 1}}/{{myDisplayLists[mediaTypes.ANIME].length}}</span>
           </h3>
         </ion-item>
         <ion-item-options side="right">
-          <button ion-button color="primary" (click)="share(i)">
+          <button ion-button color="dark" (click)="share(i)">
             <ion-icon name="share"></ion-icon>
             Share
+          </button>
+          <button ion-button color="danger" (click)="promptDelete(i)">
+            <ion-icon name="trash"></ion-icon>
+            Delete
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
+
+    <ion-list no-lines *ngSwitchCase="3">
+      <ion-item text-center *ngIf="myLists[mediaTypes.MANGA].length == 0">
+        <p>{{error ? "Could not get your list :(" : "Your list is empty."}}</p>
+      </ion-item>
+      <ion-item-sliding *ngFor="let item of myDisplayLists[mediaTypes.MANGA]; let i = index;">
+        <ion-item (click)="openMedia(i);">
+          <ion-avatar item-start>
+            <img style="object-fit: cover;" src="{{item.coverImage.medium}}" />
+          </ion-avatar>
+          <h2>{{item.title.length > MAX_TITLE_LEN ? item.title.substring(0, MAX_TITLE_LEN) + "..." : item.title}}
+            <span style="float:right;">{{item.rating}} stars</span>
+          </h2>
+          <h3>watched on {{item.watchDate.getDate() + "-" + (item.watchDate.getMonth() + 1) + "-" + item.watchDate.getFullYear()}}
+            <span style="float: right; opacity: 0.5;">#{{i + 1}}/{{myDisplayLists[mediaTypes.MANGA].length}}</span>
+          </h3>
+        </ion-item>
+        <ion-item-options side="right">
+          <button ion-button color="dark" (click)="share(i)">
+            <ion-icon name="share"></ion-icon>
+            Share
+          </button>
+          <button ion-button color="danger" (click)="promptDelete(i)">
+            <ion-icon name="trash"></ion-icon>
+            Delete
           </button>
         </ion-item-options>
       </ion-item-sliding>
@@ -62,14 +131,18 @@
           <h2>{{item.title.length > MAX_TITLE_LEN ? item.title.substring(0, MAX_TITLE_LEN) + "..." : item.title}}
             <span style="float:right;">{{item.rating}} stars</span>
           </h2>
-          <h3>watched on {{item.watchDate.getDate() + " " + item.watchDate.getMonth() + " " + item.watchDate.getFullYear()}}
+          <h3>watched on {{item.watchDate.getDate() + "-" + item.watchDate.getMonth() + "-" + item.watchDate.getFullYear()}}
             <span style="float: right; opacity: 0.5;">#{{i + 1}}/{{myDisplayLists[mediaTypes.SHOW].length}}</span>
           </h3>
         </ion-item>
         <ion-item-options side="right">
-          <button ion-button color="primary" (click)="share(i)">
+          <button ion-button color="dark" (click)="share(i)">
             <ion-icon name="share"></ion-icon>
             Share
+          </button>
+          <button ion-button color="danger" (click)="promptDelete(i)">
+            <ion-icon name="trash"></ion-icon>
+            Delete
           </button>
         </ion-item-options>
       </ion-item-sliding>
@@ -87,14 +160,18 @@
           <h2>{{item.title.length > MAX_TITLE_LEN ? item.title.substring(0, MAX_TITLE_LEN) + "..." : item.title}}
             <span style="float:right;">{{item.rating}} stars</span>
           </h2>
-          <h3>watched on {{item.watchDate.getDate() + " " + item.watchDate.getMonth() + " " + item.watchDate.getFullYear()}}
+          <h3>watched on {{item.watchDate.getDate() + "-" + item.watchDate.getMonth() + "-" + item.watchDate.getFullYear()}}
             <span style="float: right; opacity: 0.5;">#{{i + 1}}/{{myDisplayLists[mediaTypes.MOVIE].length}}</span>
           </h3>
         </ion-item>
         <ion-item-options side="right">
-          <button ion-button color="primary" (click)="share(i)">
+          <button ion-button color="dark" (click)="share(i)">
             <ion-icon name="share"></ion-icon>
             Share
+          </button>
+          <button ion-button color="danger" (click)="promptDelete(i)">
+            <ion-icon name="trash"></ion-icon>
+            Delete
           </button>
         </ion-item-options>
       </ion-item-sliding>

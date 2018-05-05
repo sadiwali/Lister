@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, App, AlertController, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, App, AlertController, ToastController, ModalController } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
 import { LoginPage } from '../login/login';
+import { FirestoreProvider } from '../../providers/firestore/firestore';
+import { TermsPage } from '../terms/terms';
 
 /**
  * Generated class for the SettingsPage page.
@@ -17,9 +19,12 @@ import { LoginPage } from '../login/login';
 })
 export class SettingsPage {
 
+
+  versionTapCounter: number = 0;
+
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public authP: AuthProvider, private app: App, public alertCtrl: AlertController,
-    public toastCtrl: ToastController) { }
+    public toastCtrl: ToastController, public modalCtrl: ModalController) { }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SettingsPage');
@@ -43,6 +48,19 @@ export class SettingsPage {
     this.authP.signOutUser(this);
     this.createToast("You have been logged out.").present();
     this.app.getRootNav().setRoot(LoginPage);
-
   }
+
+  terms() {
+    this.modalCtrl.create(TermsPage).present();
+  }
+
+  version() {
+    this.versionTapCounter++;
+    if (this.versionTapCounter > 10) {
+      this.createToast("what.").present;
+    }
+  }
+
+
+
 }

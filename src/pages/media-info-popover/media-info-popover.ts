@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ViewController, AlertController } from 'ionic-angular';
 import { FirestoreProvider, MediaData } from '../../providers/firestore/firestore';
 
 /**
@@ -26,7 +26,8 @@ export class MediaInfoPopoverPage {
   currMediaData: MediaData;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-    public fireS: FirestoreProvider, public viewCtrl: ViewController) {
+    public fireS: FirestoreProvider, public viewCtrl: ViewController,
+  public alertCtrl: AlertController) {
     this.currMediaData = navParams.get('data');
     console.log(this.currMediaData);
   }
@@ -42,7 +43,53 @@ export class MediaInfoPopoverPage {
     }).catch(() => {
       this.close(miReturnCode.ERROR);
     });
+  }
 
+  edit() {
+    this.alertCtrl.create({
+      title: "Edit",
+      inputs: [
+        {
+          label: 'comments',
+          type: 'text',
+          name: 'comments',
+          placeholder: 'comments',
+          value: this.currMediaData.comments
+        },
+        {
+          label: 'rating',
+          type: 'number',
+          name: 'rating',
+          min: 0,
+          max: 10,
+          placeholder: 'rating',
+          value: this.currMediaData.rating.toString()
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        }, 
+        {
+          text: 'Submit',
+          handler: (data) => {
+            let newData = {
+              rating: parseInt(data.rating),
+              comments: data.comments
+            }
+
+            this.fireS.updateMedia(this.currMediaData.id, newData).then(() => {
+              this.close(miReturnCode.CHANGED);
+            }).catch(() => {
+              this.close(miReturnCode.ERROR);
+            });
+          }
+        }
+      ]
+    }).present();
+    
+    
   }
 
   close(code: miReturnCode) {

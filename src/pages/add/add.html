@@ -19,15 +19,18 @@
 <ion-content padding>
 
 
-  <ion-searchbar [(ngModel)]="query" [showCancelButton]="true" (ionInput)="search($event);" (ionCancel)="search(null);">
+  <ion-searchbar [(ngModel)]="query" [showCancelButton]="true" (ionInput)="search();" (ionCancel)="search('null');">
   </ion-searchbar>
   <ion-segment [(ngModel)]="selectedMediaType">
 
-    <ion-segment-button value="3">
+    <ion-segment-button value="4">
       ALL
     </ion-segment-button>
     <ion-segment-button value="0">
       ANIME
+    </ion-segment-button>
+    <ion-segment-button value="3">
+      MANGA
     </ion-segment-button>
     <ion-segment-button value="1">
       SHOWS
@@ -39,8 +42,10 @@
   <ion-content style="max-height: 400px; height: 300px;">
 
     <div [ngSwitch]="selectedMediaType">
-      <ion-list *ngSwitchCase="3">
-
+      <ion-list *ngSwitchCase="4">
+        <ion-item *ngIf="searching" text-center>
+          <ion-spinner ></ion-spinner>
+        </ion-item>
         <ion-item no-lines [ngClass]="(i == selectedSearchResult) ? 'selected' : ''" *ngFor="let item of searchResults; let i = index"
           (click)="selectSearchResult(i);">
           <ion-avatar item-start>
@@ -56,6 +61,20 @@
       <ion-list *ngSwitchCase="0">
 
         <ion-item no-lines [ngClass]="(i == selectedSearchResult) ? 'selected' : ''" *ngFor="let item of filteredSearchResults[0]; let i = index"
+          (click)="selectSearchResult(i);">
+          <ion-avatar item-start>
+            <img style="object-fit: cover;" src="{{item.coverImage.medium}}">
+          </ion-avatar>
+          <h2>{{item.title}}</h2>
+          <h3>
+            <i style="color:gray;">({{item.type.toLowerCase()}})</i> - {{item.startDate.year}} - {{item.source}}</h3>
+        </ion-item>
+
+      </ion-list>
+
+      <ion-list *ngSwitchCase="3">
+
+        <ion-item no-lines [ngClass]="(i == selectedSearchResult) ? 'selected' : ''" *ngFor="let item of filteredSearchResults[3]; let i = index"
           (click)="selectSearchResult(i);">
           <ion-avatar item-start>
             <img style="object-fit: cover;" src="{{item.coverImage.medium}}">

@@ -33,7 +33,7 @@ export class LoginPage {
     //this.signInUser();
 
     // debug imdb module
-
+    //ionic serve
 
   }
 
@@ -70,24 +70,28 @@ export class LoginPage {
     }
     // both inputs valid, attempt to validate
 
-    // attempt to set persistence
-    this.authP.setPersistence().then(() => {
-      this.goIn();
+    // attempt to set to remember user
+    this.authP.rememberUser(true).then(() => {
+      this.authenticate();
     }).catch(() => {
       this.createToast("Could not set persistence.").present();
-      this.goIn();
+      this.authenticate();
     })
     // attempt to sign in
 
 
   }
 
-  private goIn() {
+  private authenticate() {
     this.authP.signInUser(this.user.email, this.user.password).then(() => {
-      this.navCtrl.push(TabsPage);
+      this.goIn();
     }).catch((e) => {
       this.authP.handleAuthError(this, e);
     });
+  }
+
+  private goIn() {
+    this.navCtrl.push(TabsPage);
   }
 
   /* Display the forgot password alert */
