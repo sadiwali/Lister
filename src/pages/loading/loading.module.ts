@@ -4,7 +4,6 @@ import { LoadingPage } from './loading';
 
 @NgModule({
   declarations: [
-    LoadingPage,
   ],
   imports: [
     IonicPageModule.forChild(LoadingPage),
