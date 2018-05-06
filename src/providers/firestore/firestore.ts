@@ -5,7 +5,7 @@ import { AuthProvider } from '../auth/auth';
 import { MediaType } from '../ani-search/ani-search';
 import { Observable } from 'rxjs/Observable';
 
-
+/* Represents an item in a media list */
 export interface MediaData {
   id: string,
   title: string,
@@ -19,7 +19,7 @@ export interface MediaData {
   watchDate: Date,
   type: string
 }
-
+/* Return codes for FireStore */
 export enum FsReturnCodes {
   DUPLICATE,
   ERROR,
@@ -27,13 +27,15 @@ export enum FsReturnCodes {
   NO_DUPLI_CHECK
 }
 
+/* This provider handles all firestore database insertions and queries */
 @Injectable()
 export class FirestoreProvider {
 
   constructor(public http: HttpClient, public firestore: AngularFirestore,
     public authP: AuthProvider) { }
 
-  addMedia(data: MediaData): any {
+  /* Add the given MediaData object into the database */
+  addMedia(data: MediaData): Promise<FsReturnCodes> {
     return new Promise((resolve, reject) => {
       // query to see if duplicate exists
       this.firestore.firestore.collection('users')
@@ -65,9 +67,8 @@ export class FirestoreProvider {
         });
     });
   }
-
-  /* update the media */
-  updateMedia(id: string, newData: any) {
+  /* Update the media already stored in the database with given id (not doc id) */
+  updateMedia(id: string, newData: any): Promise<any> {
     return new Promise((resolve, reject) => {
       this.firestore.firestore.collection('users')
         .doc(this.authP.getCurrentUser().uid.toString()).collection('media')
@@ -78,86 +79,78 @@ export class FirestoreProvider {
             .doc(docId).set(newData, { merge: true }).then(() => {
               resolve()
             }).catch(() => {
+              // could not update the document
               reject();
             })
         }).catch(err => {
-          console.log('dd');
+          // could not get that document
           reject();
         });
     });
   }
-
-
-  /* Add given data to the database as a show, anime, movie, etc. */
+  /* Actually add given data to the database as a show, anime, movie, etc. */
   private addToDatabase(data: MediaData): Promise<any> {
     return this.firestore.collection('users')
       .doc(this.authP.getCurrentUser().uid.toString()).collection('media')
       .add(data);
   }
-
   /* Get all items in list of given type. If a live updated list is requierd,
-  use subscribeAll() instead. */
-  getAll(type: MediaType): Promise<[MediaData]> {
+     use subscribeAll() instead. 
+  */
+  getAll(type: MediaType): Promise<MediaData[]> {
     return new Promise((resolve, reject) => {
       this.firestore.firestore
         .collection('users').doc(this.authP.getCurrentUser().uid.toString())
         .collection('media').where('type', '==', MediaType[type]).get()
         .then((res) => {
-          let arr = [] as [MediaData]; // array to return containing results
+          let arr = [] as MediaData[]; // array to return containing results
           res.forEach((data) => {
             arr.push(data.data() as MediaData);
           });
-          resolve(arr); // send back the list
+          resolve(arr); // send back the list of MediaData
         }).catch((err) => {
           // could not query
           reject(FsReturnCodes.ERROR);
         })
     });
   }
-
-
-  importfromfile(file) {
-
-  }
-
-
-  /* delete a record from a collection  */
-  delete(id: string) {
+  /* one time code for me */
+  importfromfile(file) { }
+  /* Delete a record from a collection, given its id (not doc id) */
+  delete(id: string): Promise<any> {
     return new Promise((resolve, reject) => {
       this.firestore.firestore.collection('users')
         .doc(this.authP.getCurrentUser().uid.toString())
         .collection('media').where('id', '==', id).get().then(data => {
-          let docId = data.docs[0].id; // there should only be one
+          let docId = data.docs[0].id; // there should only be one, get its id
           // delete the doc
           this.firestore.firestore.collection('users')
             .doc(this.authP.getCurrentUser().uid.toString())
             .collection('media').doc(docId).delete()
             .then(() => resolve()).catch(() => reject());
         }).catch(err => {
-          console.log(err);
+          // could not find that document
           reject();
-        })
+        });
     });
   }
-
   /* Subscribe live to a list for displaying in real time */
-  subscribeAll(type: MediaType = null): Observable<[MediaData]> {
+  subscribeAll(type: MediaType = null): Observable<MediaData[]> {
     if (!type) {
+      // subscribe to everything in collection
       return new Observable(observer => {
         this.firestore.firestore
           .collection('users').doc(this.authP.getCurrentUser().uid.toString())
           .collection('media').onSnapshot(snapshot => {
-            var items = [] as [MediaData];
+            var items = [] as MediaData[];
             snapshot.forEach(element => {
               items.push(element.data() as MediaData);
             });
-            observer.next(items);
+            observer.next(items); // send an update
           },
             (err) => {
-              // on error, close the subscription
-              observer.complete();
+              // on error, do nothing
             });
-        // observer does not end until app close.
       });
     } else {
       return new Observable(observer => {
@@ -165,17 +158,15 @@ export class FirestoreProvider {
           .collection('users').doc(this.authP.getCurrentUser().uid.toString())
           .collection('media').where('type', '==', MediaType[type])
           .onSnapshot((snapshot) => {
-            var items = [] as [MediaData];
+            var items = [] as MediaData[];
             snapshot.forEach(element => {
               items.push(element.data() as MediaData);
             });
-            observer.next(items);
+            observer.next(items); // send an update
           },
             (err) => {
-              // on error, close the subscription
-              observer.complete();
+              // on error, do nothing
             });
-        // observer does not end until app close.
       });
     }
   }

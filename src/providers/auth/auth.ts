@@ -4,6 +4,7 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import firebase from 'firebase/app';
 import { Observable } from 'rxjs/Observable';
 import { Persistence } from '@firebase/auth-types';
+
 /*
 The authentication module handles login, registration, and password reset
 */
@@ -12,11 +13,11 @@ export class AuthProvider {
 
   constructor(public http: HttpClient, public afAuth: AngularFireAuth) { }
 
-  // sign in user
+  /* Sign in the user */
   signInUser(newEmail: string, newPassword: string): Promise<any> {
     return this.afAuth.auth.signInWithEmailAndPassword(newEmail, newPassword);
   }
-
+  /* Set the persistance of the login session */
   private setPersistence(persistence: Persistence) {
     return new Promise((resolve, reject) => {
       this.afAuth.auth.setPersistence(persistence).then(() => {
@@ -26,7 +27,6 @@ export class AuthProvider {
       });
     });
   }
-
   /* Set persistence based on really */
   rememberUser(really: boolean): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -38,51 +38,39 @@ export class AuthProvider {
       });
     });
   }
-
-  // sign up with email
+  /* Sign up user with email */
   signUpUser(newEmail: string, newPassword: string): Promise<any> {
     return this.afAuth.auth
       .createUserWithEmailAndPassword(newEmail, newPassword);
   }
-
-  // sign up with google
+  /* Sign up user with Google */
   googleSignUp(): Promise<any> {
     return this.afAuth.auth
       .signInWithPopup(new firebase.auth.GoogleAuthProvider());
   }
-
-  // reset password of user with email
+  /* Send a password reset email */
   resetPassword(email: string): Promise<any> {
     return this.afAuth.auth.sendPasswordResetEmail(email);
   }
-
-  // sign out the user, and perform signout of app
-  signOutUser(context: any): Promise<any> {
-    context.navCtrl.popToRoot();
+  /* Sign out the user */
+  signOutUser(): Promise<any> {
     return this.afAuth.auth.signOut();
   }
-
-  // authentication change broadcaster
+  /* Broadcast auth state for current user */
   userAuthChange(): Observable<firebase.User> {
     return this.afAuth.authState;
   }
-
-  // get the current user
+  /* Get the Firebase current user */
   getCurrentUser(offline: boolean = false) {
     if (offline) {
       return {
         uid: 4343434
       }
+    } else {
+      return this.afAuth.auth.currentUser;
     }
-    return this.afAuth.auth.currentUser;
   }
-
-
-
-  /**
- * Handle all errors thrown bt the Firebase Auth module.
- * @param err the error string
- */
+  /* Handle all errors thrown bt the Firebase Auth module. */
   handleAuthError(context: any, err: any) {
     let eCode = err.code;
     if (eCode == "auth/user-not-found") {
@@ -104,5 +92,4 @@ export class AuthProvider {
       context.createToast(err.message);
     }
   }
-
 }

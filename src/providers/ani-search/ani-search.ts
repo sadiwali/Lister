@@ -1,13 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import * as imdb from '../../../node_modules/imdb-api';
-/*
-  Generated class for the AniSearchProvider provider.
 
-  See https://angular.io/guide/dependency-injection for more info on providers
-  and Angular DI.
-*/
 
+/* Represents a type of media */
 export enum MediaType {
   ANIME,
   SHOW,
@@ -15,12 +11,12 @@ export enum MediaType {
   MANGA,
   ENTIRE
 }
-
+/* Represents an available (used) API */
 export enum Api {
   ANILIST,
   IMDB
 }
-
+/* Represents a search result item, this object is displayed on search */
 export interface SearchResultItem {
   id: number;
   title: string;
@@ -37,14 +33,17 @@ export interface SearchResultItem {
   source: string;
 }
 
+/*
+  This provider handles all media search and get operations
+*/
 @Injectable()
 export class AniSearchProvider {
 
-  url = 'https://graphql.anilist.co';
-  private apiKey = "6288db53";
+  private url = 'https://graphql.anilist.co'; // URL for anilist api
+  private apiKey = "6288db53"; // private key for IMDB api
+
 
   constructor(public http: HttpClient) { }
-
   /* Get an item based on the type */
   get(title: string, type: MediaType): Promise<SearchResultItem> {
     if (type == MediaType.MOVIE || type == MediaType.SHOW) {
@@ -61,9 +60,9 @@ export class AniSearchProvider {
       return null;
     }
   }
-
-  /* Search for a query based on the type */
-  search(query: string, type: MediaType = null) {
+  /* Perform a query based on the type */
+  async search(query: string, type: MediaType = null) {
+    // TODO: make the search all more elegant
     if (type == MediaType.MOVIE || type == MediaType.SHOW) {
       return new Promise((resolve, reject) => {
         this.searchImdb(query, type).then((data) => { resolve(data) }).catch((err) => { reject(err) });
@@ -74,8 +73,6 @@ export class AniSearchProvider {
       });
     } else {
       // search all
-      console.log("Searching all");
-
       return new Promise((resolve, reject) => {
         this.searchAni(query).then(aniData => {
           this.searchImdb(query).then(imdbData => {
@@ -97,11 +94,8 @@ export class AniSearchProvider {
       });
     }
   }
-
   /* Get an item on the AniList DB using GraphQL. */
   getAni(title: string, type: MediaType): Promise<SearchResultItem> {
-    console.log(title, MediaType[type]);
-
     // define query variables
     var variables = {
       "type": MediaType[type],
@@ -140,7 +134,6 @@ export class AniSearchProvider {
         variables: variables
       })
     };
-
     // return the promise
     return new Promise((resolve, reject) => {
       // attempt to fetch data
@@ -171,7 +164,6 @@ export class AniSearchProvider {
       });
     });
   }
-
   /* Search for an item on the AniList DB using GraphQL. 
 
   query: the search query.
@@ -184,7 +176,6 @@ export class AniSearchProvider {
   searchAni(query: string, type: MediaType = null, page: number = 1,
     perPage: number = 10): Promise<[SearchResultItem]> {
     // define query variables
-
     var variables;
     if (type) {
       variables = {
@@ -273,7 +264,6 @@ export class AniSearchProvider {
       })
     })
   }
-
   /* Get an item on the IMDB using its API 
   
   title: the title of the media.
@@ -319,7 +309,6 @@ export class AniSearchProvider {
       });
     });
   }
-
   /* Search for an item on the IMDB using its API 
   
   query: the search query.
@@ -334,7 +323,6 @@ export class AniSearchProvider {
     return new Promise((resolve, reject) => {
       imdb.search({ title: query }, { apiKey: this.apiKey }).then((data) => {
 
-        console.log(data);
         let arr: any = [];
         for (let i = 0; i < data.results.length; i++) {
 
@@ -371,7 +359,4 @@ export class AniSearchProvider {
       });
     });
   }
-
-
-
 }

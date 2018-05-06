@@ -5,6 +5,7 @@ import { AniSearchProvider } from '../../providers/ani-search/ani-search';
 import { MediaType } from '../../providers/ani-search/ani-search';
 import { FirestoreProvider, MediaData, FsReturnCodes } from '../../providers/firestore/firestore';
 import { MediaInfoPage } from '../media-info/media-info';
+import { StorageProvider } from '../../providers/storage/storage';
 
 /**
  * Generated class for the ListPage page.
@@ -29,31 +30,12 @@ export class ListPage {
 
   selectedMediaType: string;
 
-
-  myList: any = []; // list storign all content
-
-  myLists: any = {
-    0: [],
-    1: [],
-    2: [],
-    3: [],
-    4: []
-  }
-
-  myDisplayLists: any = {
-    0: [],
-    1: [],
-    2: [],
-    3: [],
-    4: []
-  }
-
   error: boolean = false; // could not get list
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public modalCtrl: ModalController, public aniSearch: AniSearchProvider,
     public fireS: FirestoreProvider, public alertCtrl: AlertController,
-    public toastCtrl: ToastController) {
+    public toastCtrl: ToastController, public listStorage: StorageProvider) {
     this.subToLists();
   }
 
@@ -75,57 +57,15 @@ export class ListPage {
     });
   }
 
-
-  setList(which: MediaType) {
-    let resArr;
-
-    if (which == MediaType.ENTIRE) {
-      // everything goes into this list
-      resArr = this.myList;
-    } else {
-      resArr = this.myList.filter(x => x.type.toLowerCase()
-        === MediaType[which].toLowerCase());
-    }
-
-    this.myLists[which] = resArr; // set the main list
-    this.myDisplayLists[which] = resArr; // set the display list also
-    console.log(resArr);
-
-  }
-
-  private sortList(list: [MediaData]): [MediaData] {
-    let res = list.sort(this.compareDates);
-    console.log(list, res);
-    return res;
-  }
-
-  private compareDates(a: MediaData, b: MediaData) {
-    if ((a.watchDate as Date) < (b.watchDate as Date)) {
-      return -1;
-    } else if ((a.watchDate as Date) > (b.watchDate as Date)) {
-      return 1;
-    } else {
-      return 0;
-    }
-  }
-
   subToLists() {
     // subscribe to the media collection of user
     this.fireS.subscribeAll().subscribe(next => {
       // update the result after every change
-      this.myList = this.sortList(next);
-      console.log(this.myList);
-      this.setList(MediaType.ANIME);
-      this.setList(MediaType.MANGA);
-      this.setList(MediaType.SHOW);
-      this.setList(MediaType.MOVIE);
-      // this is different because searching this list filters it
-      this.setList(MediaType.ENTIRE);
+      this.listStorage.updateLists(next);
     },
       () => {
-        // on complete
+        // on complete, do nothing
         console.log("no longer listening...");
-        this.myList = [];
       });
   }
 
@@ -133,24 +73,21 @@ export class ListPage {
   searchList(event: any) {
     if (this.listSearchQuery && this.listSearchQuery.length >= 3) {
       // something to search for
-      let resArr = this.myLists[parseInt(this.selectedMediaType)]
-        .filter(x => x.title.toLowerCase()
-          .includes(this.listSearchQuery.toLowerCase()));
-
-      this.myDisplayLists[this.selectedMediaType] = resArr;
+      this.listStorage.searchList(parseInt(this.selectedMediaType),
+        this.listSearchQuery);
     } else {
       // reset the list, nothing to search for
-      this.resetDisplayLists(parseInt(this.selectedMediaType));
+      this.listStorage.resetDispList(parseInt(this.selectedMediaType));
     }
   }
 
-  resetDisplayLists(which: number) {
-    this.myDisplayLists[which] = this.myLists[which];
-  }
 
   /* Open a selected media */
   openMedia(index: number) {
-    this.modalCtrl.create(MediaInfoPage, { data: this.myDisplayLists[parseInt(this.selectedMediaType)][index] }).present();
+    this.modalCtrl.create(MediaInfoPage, {
+      data: this.listStorage.getDisplayData(parseInt(this.selectedMediaType),
+        index)
+    }).present();
   }
 
   /* bring up the add modal */
@@ -184,7 +121,8 @@ export class ListPage {
 
   private delete(index: number) {
     console.log(index);
-    let deletingObj = this.myDisplayLists[parseInt(this.selectedMediaType)][index];
+    let deletingObj = this.listStorage
+      .getDisplayData(parseInt(this.selectedMediaType), index);
     console.log(deletingObj);
     this.fireS.delete(deletingObj.id).then(() => {
       let toast = this.toastCtrl.create({
@@ -207,7 +145,6 @@ export class ListPage {
           })
         }
       });
-
       toast.present();
     }).catch(() => {
       this.createToast("Could not delete " + deletingObj.title).present();

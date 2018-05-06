@@ -45,7 +45,7 @@ export class SettingsPage {
   }
 
   logout() {
-    this.authP.signOutUser(this);
+    this.authP.signOutUser();
     this.createToast("You have been logged out.").present();
     this.app.getRootNav().setRoot(LoginPage);
   }
