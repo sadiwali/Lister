@@ -8,6 +8,7 @@ import { ToastController } from 'ionic-angular/components/toast/toast-controller
 import { AuthProvider } from '../../providers/auth/auth';
 import { Const } from '../../package/Const';
 import { AngularFirestore } from 'angularfire2/firestore';
+import { SimpleOutputProvider } from '../../providers/simple-output/simple-output';
 
 /**
  * Generated class for the RegisterPage page.
@@ -46,15 +47,8 @@ export class RegisterPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public modalCtrl: ModalController, public viewCtrl: ViewController,
-    public alertCtrl: AlertController, public toastCtrl: ToastController,
-    public authP: AuthProvider, public af: AngularFirestore) {
-  }
-
-  createToast(message: string): any {
-    return this.toastCtrl.create({
-      message,
-      duration: 3000
-    });
+    public simpleOut: SimpleOutputProvider, public authP: AuthProvider, 
+    public af: AngularFirestore) {
   }
 
   ionViewDidLoad() {
@@ -79,18 +73,18 @@ export class RegisterPage {
 
       if (!this.form.email.valid) {
         // email not entered
-        this.createToast("Enter your email!").present();
+        this.simpleOut.createToast("Enter your email!").present();
         return;
       }
 
       if (this.form.password_main.valid
         && !this.form.password_sub.valid) {
         // both passwords not valid
-        this.createToast("Passwords do not match").present();
+        this.simpleOut.createToast("Passwords do not match").present();
         return;
       } else if (!this.form.password_main.valid
         || !this.form.password_sub.valid) {
-        this.createToast("Passwords not valid").present();
+        this.simpleOut.createToast("Passwords not valid").present();
 
         return;
       }
@@ -124,20 +118,23 @@ export class RegisterPage {
             this.form.password_main.text = ""; this.form.password_sub.text = "";
           }
           this.loadingRegister = false; // stop the spinner
+
+          this.simpleOut.createToast("You are ready to log in!", 1000).present();
+
           this.viewCtrl.dismiss({
             statCode: Const.STATCODE.SUCCESS,
             email: this.form.email.text
           });
         }
       } catch (e) {
-        this.authP.handleAuthError(this, e);
+        this.authP.handleAuthError(e);
         this.viewCtrl.dismiss({ statCode: Const.STATCODE.FAIL });
       } finally {
         this.loadingRegister = false;
       }
 
     } else {
-      this.createToast("Please fill in the sign up sheet!").present();
+      this.simpleOut.createToast("Please fill in the sign up sheet!").present();
       return;
     }
   }

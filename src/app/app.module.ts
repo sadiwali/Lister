@@ -25,6 +25,7 @@ import { MediaInfoPage } from '../pages/media-info/media-info';
 import { MediaInfoPopoverPage } from '../pages/media-info-popover/media-info-popover';
 import { LoadingPage } from '../pages/loading/loading';
 import { StorageProvider } from '../providers/storage/storage';
+import { SimpleOutputProvider } from '../providers/simple-output/simple-output';
 
 // AF2 Settings
 const firebaseConfig = {
@@ -84,6 +85,7 @@ const firebaseConfig = {
     AniSearchProvider,
     FirestoreProvider,
     StorageProvider,
+    SimpleOutputProvider,
   ]
 })
 export class AppModule {}

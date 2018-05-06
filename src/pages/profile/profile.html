@@ -7,7 +7,18 @@
 
 <ion-content padding>
   <ion-list>
-    <ion-item></ion-item>
+    <ion-item text-center style="font-size: 3em;">
+      {{this.authP.getCurrentUser().displayName}}
+      <div style="font-size: 0.3em;">Joined {{joinDate}}</div>
+    </ion-item>
+    <ion-item text-center>You have {{this.listStorage.getTotalItems(4)}} items across your lists</ion-item>
+    <br>
+    <ion-item no-lines>{{this.listStorage.getTotalItems(0)}} items in ANIME</ion-item>
+    <ion-item no-lines>{{this.listStorage.getTotalItems(3)}} items in MANGA</ion-item>
+    <ion-item no-lines>{{this.listStorage.getTotalItems(1)}} items in SHOW</ion-item>
+    <ion-item no-lines>{{this.listStorage.getTotalItems(2)}} items in MOVIE</ion-item>
+
   </ion-list>
+
 
 </ion-content>

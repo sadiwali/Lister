@@ -6,6 +6,7 @@ import { ModalController } from 'ionic-angular/components/modal/modal-controller
 import { AuthProvider } from '../../providers/auth/auth';
 import { ToastController, AlertController, App } from 'ionic-angular';
 import { LoginPage } from '../login/login';
+import { SimpleOutputProvider } from '../../providers/simple-output/simple-output';
 
 @Component({
   templateUrl: 'tabs.html'
@@ -17,37 +18,6 @@ export class TabsPage {
   tab3Root = SettingsPage;
 
 
-  constructor(public modalCtrl: ModalController, public authP: AuthProvider,
-    public toastCtrl: ToastController, public alertCtrl: AlertController,
-    private app: App) {
-    console.log("tabs");
-    let i = 0;
-    this.authP.afAuth.authState.subscribe(res => {
-      i++;
-      if (res && res.uid) {
-        // logged in
-        if (i == 1) {
-          this.createToast("Welcome, " + res.displayName, 1000).present();
-          console.log("tt ", i);
-        }
-      } else {
-        // not logged in
-        this.app.getRootNav().setRoot(LoginPage);
-      }
-    });
-  }
-
-  createToast(message: string, duration = 3000): any {
-    return this.toastCtrl.create({
-      message,
-      duration: duration
-    });
-  }
-
-  createAlert(message: string): any {
-    return this.alertCtrl.create({
-      title: message, buttons: [{ text: 'Okay' }]
-    });
-  }
+  constructor(public modalCtrl: ModalController, public authP: AuthProvider) { }
 
 }

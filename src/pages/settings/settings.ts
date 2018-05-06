@@ -4,6 +4,7 @@ import { AuthProvider } from '../../providers/auth/auth';
 import { LoginPage } from '../login/login';
 import { FirestoreProvider } from '../../providers/firestore/firestore';
 import { TermsPage } from '../terms/terms';
+import { SimpleOutputProvider } from '../../providers/simple-output/simple-output';
 
 /**
  * Generated class for the SettingsPage page.
@@ -23,31 +24,17 @@ export class SettingsPage {
   versionTapCounter: number = 0;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-    public authP: AuthProvider, private app: App, public alertCtrl: AlertController,
-    public toastCtrl: ToastController, public modalCtrl: ModalController) { }
+    public authP: AuthProvider, private app: App,
+    public simpleOut: SimpleOutputProvider,
+    public modalCtrl: ModalController) { }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SettingsPage');
   }
 
-
-  createToast(message: string, duration = 3000): any {
-    return this.toastCtrl.create({
-      message,
-      duration: duration
-    });
-  }
-
-  createAlert(message: string): any {
-    return this.alertCtrl.create({
-      title: message, buttons: [{ text: 'Okay' }]
-    });
-  }
-
   logout() {
     this.authP.signOutUser();
-    this.createToast("You have been logged out.").present();
-    this.app.getRootNav().setRoot(LoginPage);
+    this.simpleOut.createToast("You have been logged out.").present();
   }
 
   terms() {
@@ -57,7 +44,7 @@ export class SettingsPage {
   version() {
     this.versionTapCounter++;
     if (this.versionTapCounter > 10) {
-      this.createToast("what.").present;
+      this.simpleOut.createToast("what.").present;
     }
   }
 

@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
+import { StorageProvider } from '../../providers/storage/storage';
+import { MediaType } from '../../providers/ani-search/ani-search';
+import { UserData, FirestoreProvider } from '../../providers/firestore/firestore';
 
 /**
  * Generated class for the ProfilePage page.
@@ -16,12 +19,19 @@ import { AuthProvider } from '../../providers/auth/auth';
 })
 export class ProfilePage {
 
+  mediaType: MediaType;
+  userInfo: UserData;
+  joinDate: string;
+
   constructor(public navCtrl: NavController, public navParams: NavParams,
-  public authP: AuthProvider) {
+    public authP: AuthProvider, public listStorage: StorageProvider,
+    public fireS: FirestoreProvider) {
+    this.fireS.getUserData().then(data => {
+      this.userInfo = data;
+      this.joinDate = data.rawJoinDate.getDate() + "-"
+        + (data.rawJoinDate.getMonth() + 1) + "-" + data.rawJoinDate.getFullYear();
+    }).catch(err => {
+      this.joinDate = "unknown";
+    });
   }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad ProfilePage');
-  }
-
 }

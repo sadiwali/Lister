@@ -5,6 +5,7 @@ import { MediaType, AniSearchProvider } from '../../providers/ani-search/ani-sea
 import { AuthProvider } from '../../providers/auth/auth';
 import { MediaData, FirestoreProvider, FsReturnCodes } from '../../providers/firestore/firestore';
 import { MAX_TITLE_LEN } from '../list/list';
+import { SimpleOutputProvider } from '../../providers/simple-output/simple-output';
 
 /**
  * Generated class for the AddPage page.
@@ -44,25 +45,12 @@ export class AddPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public viewCtrl: ViewController, public aniSearch: AniSearchProvider,
-    public toastCtrl: ToastController, public alertCtrl: AlertController,
+    public simpleOut: SimpleOutputProvider,
     public fireS: FirestoreProvider, public authP: AuthProvider) {
   }
 
   filterResults(type: MediaType) {
     this.filteredSearchResults[type] = this.searchResults.filter(x => x.type.toLowerCase() == MediaType[type].toLowerCase());
-  }
-
-  createToast(message: string, duration = 3000): any {
-    return this.toastCtrl.create({
-      message,
-      duration: duration
-    });
-  }
-
-  createAlert(message: string): any {
-    return this.alertCtrl.create({
-      title: message, buttons: [{ text: 'Okay' }]
-    });
   }
 
   closeModal() {
@@ -119,7 +107,7 @@ export class AddPage {
     // add the selected item to the list, conditonal on inputs filled
     if (this.selectedSearchResult < 0) {
       // nothing selected
-      this.createAlert("You must select an item!").present();
+      this.simpleOut.createAlert("You must select an item!").present();
       return;
     }
 
@@ -129,7 +117,7 @@ export class AddPage {
     }
 
     if (!this.rating) {
-      this.createAlert("You need to enter a rating out of 10!").present();
+      this.simpleOut.createAlert("You need to enter a rating out of 10!").present();
       return;
     }
     // add
@@ -157,16 +145,16 @@ export class AddPage {
       }
       if (res == FsReturnCodes.SUCCESS) {
         // success
-        this.createToast("Added " + data.title + " to your list.").present();
+        this.simpleOut.createToast("Added " + data.title + " to your list.").present();
         this.closeModal();
       }
     }).catch((err) => {
       if (err == FsReturnCodes.DUPLICATE) {
         // duplicate exists
-        this.createAlert("You already added this.").present();
+        this.simpleOut.createAlert("You already added this.").present();
       } else if (err == FsReturnCodes.ERROR) {
         // error
-        this.createAlert("Please try again.").present();
+        this.simpleOut.createAlert("Please try again.").present();
       }
     });
 

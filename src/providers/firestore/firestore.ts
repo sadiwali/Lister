@@ -26,6 +26,10 @@ export enum FsReturnCodes {
   SUCCESS,
   NO_DUPLI_CHECK
 }
+/* Represents user data stored in the database */
+export interface UserData {
+  rawJoinDate: Date
+}
 
 /* This provider handles all firestore database insertions and queries */
 @Injectable()
@@ -169,5 +173,17 @@ export class FirestoreProvider {
             });
       });
     }
+  }
+
+  getUserData(): Promise<UserData> {
+    return new Promise((resolve, reject) => {
+      this.firestore.firestore.collection('users')
+        .doc(this.authP.getCurrentUser().uid.toString()).collection('userinfo')
+        .doc('userinfo').get().then(data => {
+          resolve(data.data() as UserData);
+        }).catch(err => {
+          reject();
+        });
+    });
   }
 }

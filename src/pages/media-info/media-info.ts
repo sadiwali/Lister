@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController, ToastController, ViewController, PopoverController } from 'ionic-angular';
 import { MediaData } from '../../providers/firestore/firestore';
 import { MediaInfoPopoverPage, miReturnCode } from '../media-info-popover/media-info-popover';
+import { SimpleOutputProvider } from '../../providers/simple-output/simple-output';
 
 /**
  * Generated class for the MediaInfoPage page.
@@ -23,27 +24,14 @@ export class MediaInfoPage {
 
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-    public alertCtrl: AlertController, public toastCtrl: ToastController,
-    public viewCtrl: ViewController, public popCtrl: PopoverController) {
+    public simpleOut: SimpleOutputProvider, public viewCtrl: ViewController,
+     public popCtrl: PopoverController) {
     this.currMediaData = navParams.get('data');
     console.log(this.currMediaData);
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad MediaInfoPage');
-  }
-
-  createToast(message: string, duration = 3000): any {
-    return this.toastCtrl.create({
-      message,
-      duration: duration
-    });
-  }
-
-  createAlert(message: string): any {
-    return this.alertCtrl.create({
-      title: message, buttons: [{ text: 'Okay' }]
-    });
   }
 
   closeModal() {
@@ -56,9 +44,9 @@ export class MediaInfoPage {
 
     moreInfoPop.onDidDismiss(data => {
       if (data == miReturnCode.DELETED) {
-        this.createToast("Deleted " + this.currMediaData.title).present();
+        this.simpleOut.createToast("Deleted " + this.currMediaData.title).present();
       } else if (data == miReturnCode.ERROR) {
-        this.createToast("Please try that again.").present();
+        this.simpleOut.createToast("Please try that again.").present();
       }
       this.closeModal();
     });

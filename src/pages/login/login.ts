@@ -10,6 +10,7 @@ import { AuthProvider } from '../../providers/auth/auth';
 import { validateEmail } from '../../package/Tools';
 import { AlertController } from 'ionic-angular/components/alert/alert-controller';
 import { TabsPage } from '../tabs/tabs';
+import { SimpleOutputProvider } from '../../providers/simple-output/simple-output';
 /**
  * Generated class for the LoginPage page.
  *
@@ -25,11 +26,11 @@ import { TabsPage } from '../tabs/tabs';
 export class LoginPage {
   user = {} as User; // for input
   constructor(public navCtrl: NavController, public navParams: NavParams,
-    public modalCtrl: ModalController, public toastCtrl: ToastController,
-    public authP: AuthProvider, public alertCtrl: AlertController) {
+    public modalCtrl: ModalController, public simpleOut: SimpleOutputProvider,
+    public authP: AuthProvider) {
 
     this.user.email = "sadiwali@hotmail.com";
-    this.user.password = "frgtwhy";
+    this.user.password = "password";
     //this.signInUser();
 
     // debug imdb module
@@ -41,18 +42,6 @@ export class LoginPage {
     console.log('ionViewDidLoad LoginPage');
   }
 
-  createToast(message: string, duration = 3000): any {
-    return this.toastCtrl.create({
-      message,
-      duration: duration
-    });
-  }
-
-  createAlert(message: string): any {
-    return this.alertCtrl.create({
-      title: message, buttons: [{ text: 'Okay' }]
-    });
-  }
 
   showTerms() {
     this.modalCtrl.create(TermsPage).present();
@@ -60,12 +49,12 @@ export class LoginPage {
 
   signInUser() {
     if (!validateEmail(this.user.email)) {
-      this.createToast("That is not a valid email").present();
+      this.simpleOut.createToast("That is not a valid email").present();
       return;
     }
 
     if (this.user.password.length < Const.MIN_PASS_LENGTH) {
-      this.createToast("Password is not valid!").present();
+      this.simpleOut.createToast("Password is not valid!").present();
       return;
     }
     // both inputs valid, attempt to validate
@@ -74,7 +63,7 @@ export class LoginPage {
     this.authP.rememberUser(true).then(() => {
       this.authenticate();
     }).catch(() => {
-      this.createToast("Could not set persistence.").present();
+      this.simpleOut.createToast("Could not set persistence.").present();
       this.authenticate();
     })
     // attempt to sign in
@@ -85,7 +74,7 @@ export class LoginPage {
       //this.goIn();
       // no need to goIn, because appComponent handles that for us
     }).catch((e) => {
-      this.authP.handleAuthError(this, e);
+      this.authP.handleAuthError(e);
     });
   }
 
@@ -97,7 +86,7 @@ export class LoginPage {
 
   /* Display the forgot password alert */
   forgotPassword() {
-    this.alertCtrl.create({
+    this.simpleOut.getAlertCtrl().create({
       title: 'Reset Password',
       inputs: [
         {
@@ -117,12 +106,12 @@ export class LoginPage {
             console.log(data.email);
             if (validateEmail(data.email)) {
               this.authP.resetPassword(data.email).then(() => {
-                this.createAlert("Password reset email sent!").present();;
+                this.simpleOut.createAlert("Password reset email sent!").present();;
               }).catch(() => {
-                this.createAlert("Could not send password reset email.").present();
+                this.simpleOut.createAlert("Could not send password reset email.").present();
               })
             } else {
-              this.createAlert("Incorrect email.").present();
+              this.simpleOut.createAlert("Incorrect email.").present();
             }
           }
         }
@@ -138,8 +127,8 @@ export class LoginPage {
         // do nothing
       } else if (recData.statCode == Const.STATCODE.SUCCESS) {
         // success
-        this.createToast("You are ready to login!").present();
-        this.user.email = recData.email;
+        // this.simpleOut.createToast("You are ready to login!").present();
+        // this.user.email = recData.email;
       }
     });
 

@@ -6,6 +6,7 @@ import { MediaType } from '../../providers/ani-search/ani-search';
 import { FirestoreProvider, MediaData, FsReturnCodes } from '../../providers/firestore/firestore';
 import { MediaInfoPage } from '../media-info/media-info';
 import { StorageProvider } from '../../providers/storage/storage';
+import { SimpleOutputProvider } from '../../providers/simple-output/simple-output';
 
 /**
  * Generated class for the ListPage page.
@@ -34,27 +35,14 @@ export class ListPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public modalCtrl: ModalController, public aniSearch: AniSearchProvider,
-    public fireS: FirestoreProvider, public alertCtrl: AlertController,
-    public toastCtrl: ToastController, public listStorage: StorageProvider) {
+    public fireS: FirestoreProvider, public simpleOut: SimpleOutputProvider,
+    public listStorage: StorageProvider) {
     this.subToLists();
   }
 
   ionViewDidEnter() {
     console.log("enter");
     this.selectedMediaType = "4";
-  }
-
-  createToast(message: string, duration = 3000): any {
-    return this.toastCtrl.create({
-      message,
-      duration: duration
-    });
-  }
-
-  createAlert(message: string): any {
-    return this.alertCtrl.create({
-      title: message, buttons: [{ text: 'Okay' }]
-    });
   }
 
   subToLists() {
@@ -102,7 +90,7 @@ export class ListPage {
   promptDelete(index: number) {
     // prompt for deletion
     console.log(index);
-    this.alertCtrl.create({
+    this.simpleOut.getAlertCtrl().create({
       title: 'Are you sure?',
       buttons: [
         {
@@ -125,7 +113,7 @@ export class ListPage {
       .getDisplayData(parseInt(this.selectedMediaType), index);
     console.log(deletingObj);
     this.fireS.delete(deletingObj.id).then(() => {
-      let toast = this.toastCtrl.create({
+      let toast = this.simpleOut.getToastCtrl().create({
         message: "Deleted " + deletingObj.title,
         duration: 5000,
         showCloseButton: true,
@@ -139,7 +127,7 @@ export class ListPage {
           }).catch(err => {
             // could not redo the last action
             if (err == FsReturnCodes.ERROR) {
-              this.createAlert("Could not undo your deletion. Please add it back manually...").present();
+              this.simpleOut.createAlert("Could not undo your deletion. Please add it back manually...").present();
               this.modalCtrl.create(AddPage).present();
             }
           })
@@ -147,7 +135,7 @@ export class ListPage {
       });
       toast.present();
     }).catch(() => {
-      this.createToast("Could not delete " + deletingObj.title).present();
+      this.simpleOut.createToast("Could not delete " + deletingObj.title).present();
     });
   }
 

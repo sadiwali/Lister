@@ -4,6 +4,7 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import firebase from 'firebase/app';
 import { Observable } from 'rxjs/Observable';
 import { Persistence } from '@firebase/auth-types';
+import { SimpleOutputProvider } from '../simple-output/simple-output';
 
 /*
 The authentication module handles login, registration, and password reset
@@ -11,7 +12,8 @@ The authentication module handles login, registration, and password reset
 @Injectable()
 export class AuthProvider {
 
-  constructor(public http: HttpClient, public afAuth: AngularFireAuth) { }
+  constructor(public http: HttpClient, public afAuth: AngularFireAuth,
+  public simpleOut: SimpleOutputProvider) { }
 
   /* Sign in the user */
   signInUser(newEmail: string, newPassword: string): Promise<any> {
@@ -71,25 +73,26 @@ export class AuthProvider {
     }
   }
   /* Handle all errors thrown bt the Firebase Auth module. */
-  handleAuthError(context: any, err: any) {
+  handleAuthError(err: any) {
     let eCode = err.code;
+    console.log(err.code);
     if (eCode == "auth/user-not-found") {
       // user not found
-      context.createToast("I don't know you!, Please register!").present();
+      this.simpleOut.createToast("I don't know you!, Please register!").present();
     } else if (eCode == "auth/network-request-failed") {
       // could not connect to server
-      context.createToast("Hmm... Are you offline?").present();
+      this.simpleOut.createToast("Hmm... Are you offline?").present();
     } else if (eCode == "auth/wrong-password") {
       // user entered wrong password
-      context.createToast("That is not the right password."
+      this.simpleOut.createToast("That is not the right password."
         + " Did you forget it?").present();
     } else if (eCode == "auth/email-already-in-use") {
       // email already in use, cannot register
-      context.createToast("I already know this email."
+      this.simpleOut.createToast("I already know this email."
         + " Did you forget it's password?").present();
     } else {
       // an unknown rror occurs
-      context.createToast(err.message);
+      this.simpleOut.createToast(err.message).present();
     }
   }
 }

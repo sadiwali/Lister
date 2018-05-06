@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController, AlertController } from 'ionic-angular';
 import { FirestoreProvider, MediaData } from '../../providers/firestore/firestore';
+import { SimpleOutputProvider } from '../../providers/simple-output/simple-output';
 
 /**
  * Generated class for the MediaInfoPopoverPage page.
@@ -27,7 +28,7 @@ export class MediaInfoPopoverPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public fireS: FirestoreProvider, public viewCtrl: ViewController,
-  public alertCtrl: AlertController) {
+  public simpleOut: SimpleOutputProvider) {
     this.currMediaData = navParams.get('data');
     console.log(this.currMediaData);
   }
@@ -46,7 +47,7 @@ export class MediaInfoPopoverPage {
   }
 
   edit() {
-    this.alertCtrl.create({
+    this.simpleOut.getAlertCtrl().create({
       title: "Edit",
       inputs: [
         {
