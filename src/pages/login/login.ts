@@ -78,19 +78,20 @@ export class LoginPage {
       this.authenticate();
     })
     // attempt to sign in
-
-
   }
 
   private authenticate() {
     this.authP.signInUser(this.user.email, this.user.password).then(() => {
-      this.goIn();
+      //this.goIn();
+      // no need to goIn, because appComponent handles that for us
     }).catch((e) => {
       this.authP.handleAuthError(this, e);
     });
   }
 
+  /* depreciated */
   private goIn() {
+    console.log('go in');
     this.navCtrl.push(TabsPage);
   }
 

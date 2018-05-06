@@ -28,6 +28,7 @@ export class TabsPage {
         // logged in
         if (i == 1) {
           this.createToast("Welcome, " + res.displayName, 1000).present();
+          console.log("tt ", i);
         }
       } else {
         // not logged in

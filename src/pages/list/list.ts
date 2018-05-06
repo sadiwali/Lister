@@ -27,8 +27,6 @@ export class ListPage {
 
   mediaTypes: any = MediaType; // required for HTML to read MediaType
 
-  isListView: boolean = false;
-
   selectedMediaType: string;
 
 

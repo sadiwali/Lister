@@ -20,7 +20,7 @@ export class MyApp {
       // check if user already logged in
       this.authP.afAuth.authState.subscribe(res => {
         // check if user logged in through persistence
-        if (res && res.uid) {
+        if (res && res.uid) {         
           // logged in so send to home
           this.rootPage = TabsPage;
         } else {
