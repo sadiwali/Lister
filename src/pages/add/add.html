@@ -24,19 +24,19 @@
   <ion-segment [(ngModel)]="selectedMediaType">
 
     <ion-segment-button value="4">
-      ALL
+      ALL ({{ this.searchResults.length]}})
     </ion-segment-button>
     <ion-segment-button value="0">
-      ANIME
+      ANIME ({{ this.filteredSearchResults[0].length}})
     </ion-segment-button>
     <ion-segment-button value="3">
-      MANGA
+      MANGA ({{ this.filteredSearchResults[3].length}})
     </ion-segment-button>
     <ion-segment-button value="1">
-      SHOWS
+      SHOWS ( this.filteredSearchResults[1].length)
     </ion-segment-button>
     <ion-segment-button value="2">
-      MOVIES
+      MOVIES ({{ this.filteredSearchResults[2].length}})
     </ion-segment-button>
   </ion-segment>
   <ion-content style="max-height: 400px; height: 300px;">

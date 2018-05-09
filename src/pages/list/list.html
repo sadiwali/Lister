@@ -14,16 +14,16 @@
       ALL ({{this.listStorage.getTotalItems(mediaTypes.ENTIRE)}})
     </ion-segment-button>
     <ion-segment-button value="0">
-      ANIME ({{this.listStorage.getDispList(mediaTypes.ANIME).length}})
+      ANIME ({{this.listStorage.getTotalItems(mediaTypes.ANIME)}})
     </ion-segment-button>
     <ion-segment-button value="3">
-      MANGA ({{this.listStorage.getDispList(mediaTypes.MANGA).length}})
+      MANGA ({{this.listStorage.getTotalItems(mediaTypes.MANGA)}})
     </ion-segment-button>
     <ion-segment-button value="1">
-      SHOWS ({{this.listStorage.getDispList(mediaTypes.SHOW).length}})
+      SHOWS ({{this.listStorage.getTotalItems(mediaTypes.SHOW)}})
     </ion-segment-button>
     <ion-segment-button value="2">
-      MOVIES ({{this.listStorage.getDispList(mediaTypes.MOVIE).length}})
+      MOVIES ({{this.listStorage.getTotalItems(mediaTypes.MOVIE)}})
     </ion-segment-button>
   </ion-segment>
 
@@ -32,7 +32,7 @@
 
     <ion-list no-lines *ngSwitchCase="4">
       <ion-item text-center *ngIf="this.listStorage.getDispList(mediaTypes.ENTIRE).length == 0">
-        <p>{{error ? "Could not get your list :(" : "Your list is empty."}}</p>
+        <p>{{error ? "Could not get your list :(" : "This list is empty."}}</p>
       </ion-item>
       <ion-item-sliding *ngFor="let item of this.listStorage.getDispList(mediaTypes.ENTIRE); let i = index;">
         <ion-item (click)="openMedia(i);">
@@ -62,7 +62,7 @@
 
     <ion-list no-lines *ngSwitchCase="0">
       <ion-item text-center *ngIf="this.listStorage.getDispList(mediaTypes.ANIME).length == 0">
-        <p>{{error ? "Could not get your list :(" : "Your list is empty."}}</p>
+        <p>{{error ? "Could not get your list :(" : "This list is empty."}}</p>
       </ion-item>
       <ion-item-sliding *ngFor="let item of this.listStorage.getDispList(mediaTypes.ANIME); let i = index;">
         <ion-item (click)="openMedia(i);">
@@ -92,7 +92,7 @@
 
     <ion-list no-lines *ngSwitchCase="3">
       <ion-item text-center *ngIf="this.listStorage.getDispList(mediaTypes.MANGA).length == 0">
-        <p>{{error ? "Could not get your list :(" : "Your list is empty."}}</p>
+        <p>{{error ? "Could not get your list :(" : "This list is empty."}}</p>
       </ion-item>
       <ion-item-sliding *ngFor="let item of this.listStorage.getDispList(mediaTypes.MANGA); let i = index;">
         <ion-item (click)="openMedia(i);">
@@ -121,7 +121,7 @@
 
     <ion-list no-lines *ngSwitchCase="1">
       <ion-item text-center *ngIf="this.listStorage.getDispList(mediaTypes.SHOW).length == 0">
-        <p>{{error ? "Could not get your list :(" : "Your list is empty."}}</p>
+        <p>{{error ? "Could not get your list :(" : "This list is empty."}}</p>
       </ion-item>
       <ion-item-sliding *ngFor="let item of this.listStorage.getDispList(mediaTypes.SHOW); let i = index;">
         <ion-item (click)="openMedia(i);">
@@ -150,7 +150,7 @@
 
     <ion-list no-lines *ngSwitchCase="2">
       <ion-item text-center *ngIf="this.listStorage.getDispList(mediaTypes.MOVIE).length == 0">
-        <p>{{error ? "Could not get your list :(" : "Your list is empty."}}</p>
+        <p>{{error ? "Could not get your list :(" : "This list is empty."}}</p>
       </ion-item>
       <ion-item-sliding *ngFor="let item of this.listStorage.getDispList(mediaTypes.MOVIE); let i = index;">
         <ion-item (click)="openMedia(i);">

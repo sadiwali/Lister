@@ -28,7 +28,7 @@
                   <button ion-button color="light" round full large (click)="signUpUser();">Sign up</button>
                 </ion-col>
                 <ion-col>
-                  <button color="primary" round ion-button full large (click)="signInUser();">Log in</button>
+                  <button color="primary" round ion-button full large (click)="signInUser();">Log in &nbsp; <ion-spinner color="light" *ngIf="loading"></ion-spinner></button>
                 </ion-col>
 
               </ion-row>
