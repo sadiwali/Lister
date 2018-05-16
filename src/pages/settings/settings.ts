@@ -34,7 +34,7 @@ export class SettingsPage {
 
   logout() {
     this.authP.signOutUser();
-    this.simpleOut.createToast("You have been logged out.").present();
+    this.simpleOut.createToast("You have been logged out.", 7000).present();
   }
 
   terms() {

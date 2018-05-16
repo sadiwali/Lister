@@ -61,37 +61,75 @@ export class AniSearchProvider {
     }
   }
   /* Perform a query based on the type */
-  async search(query: string, type: MediaType = null) {
+  async search(query: string, type: MediaType = null): Promise<SearchResultItem[]> {
+    console.log("seraching");
     // TODO: make the search all more elegant
     if (type == MediaType.MOVIE || type == MediaType.SHOW) {
       return new Promise((resolve, reject) => {
         this.searchImdb(query, type).then((data) => { resolve(data) }).catch((err) => { reject(err) });
-      });
+      }) as Promise<SearchResultItem[]>;
     } else if (type == MediaType.ANIME || type == MediaType.MANGA) {
       return new Promise((resolve, reject) => {
         this.searchAni(query, type).then((data) => { resolve(data) }).catch((err) => { reject(err) });
-      });
+      }) as Promise<SearchResultItem[]>;
     } else {
       // search all
+      console.log("searching all");
+      let aniData: any;
+      try {
+        aniData = await this.searchAni(query);
+      } catch (e) {
+        // do nothing
+      }
+
+      let imdbData: any;
+      try {
+        imdbData = await this.searchImdb(query);
+      } catch (e) {
+        // do nothing
+      }
+
+      let toRet = [];
+      if (aniData && imdbData) {
+        // merge them and return
+        toRet = aniData.concat(imdbData);
+        console.log("both");
+      } else if (aniData) {
+        toRet = aniData;
+        console.log("ani");
+
+      } else if (imdbData) {
+        toRet = imdbData;
+        console.log("imdb");
+
+      }
+
       return new Promise((resolve, reject) => {
-        this.searchAni(query).then(aniData => {
-          this.searchImdb(query).then(imdbData => {
-            resolve(aniData.concat(imdbData));
-          }).catch(err => {
-            // could not get from imdb api
-            resolve(aniData); // send back just 
-          });
-        }).catch(err => {
-          // searchAni had an issue
-        }).then(() => {
-          // aniData is not here, so nothing to get
-          this.searchImdb(query).then(imdbData => {
-            resolve(imdbData);
-          }).catch(err => {
-            reject(err);
-          });
-        })
-      });
+        if (toRet.length > 0) {
+          resolve(toRet);
+        } else {
+          reject(toRet);
+        }
+      }) as Promise<SearchResultItem[]>;
+      // return new Promise((resolve, reject) => {
+      //   this.searchAni(query).then(aniData => {
+      //     this.searchImdb(query).then(imdbData => {
+      //       resolve(aniData.concat(imdbData));
+      //     }).catch(err => {
+      //       // could not get from imdb api
+      //       resolve(aniData); // send back just 
+      //     });
+      //   }).catch(err => {
+      //     // searchAni had an issue
+      //   }).then(() => {
+      //     // aniData is not here, so nothing to get
+      //     this.searchImdb(query).then(imdbData => {
+      //       resolve(imdbData);
+      //     }).catch(err => {
+      //       reject(err);
+      //     });
+      //   })
+      // });
     }
   }
   /* Get an item on the AniList DB using GraphQL. */
@@ -379,8 +417,8 @@ export class AniSearchProvider {
         sr_json.startDate = startDate;
         sr_json.source = Api[Api.IMDB];
         sr_json.type = (data as any).type.toLowerCase()
-        == 'series' ? MediaType[MediaType.SHOW]
-        : (data as any).type;
+          == 'series' ? MediaType[MediaType.SHOW]
+          : (data as any).type;
         resolve(sr_json);
       }).catch((err) => {
         reject(err);
@@ -397,7 +435,8 @@ export class AniSearchProvider {
   Returns a list of search result objects.  
   */
   searchImdb(query: string, type: MediaType = null, page: number = 1,
-    perPage: number = 10): Promise<SearchResultItem> {
+    perPage: number = 10): Promise<SearchResultItem[]> {
+    console.log("searching imdb");
     return new Promise((resolve, reject) => {
       imdb.search({ title: query }, { apiKey: this.apiKey }).then((data) => {
 
@@ -431,6 +470,7 @@ export class AniSearchProvider {
             : (data.results[i] as any).type;
           arr.push(sr_json);
         }
+        console.log(arr);
         resolve(arr);
       }).catch((err) => {
         reject(err);

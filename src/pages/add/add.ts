@@ -28,6 +28,9 @@ export class AddPage {
   query: string = ""; // the search query
   searchResults: any = []; // list of results to display
 
+
+  loading: any;
+
   selectedMediaType: string;
 
   filteredSearchResults: any = {
@@ -67,6 +70,7 @@ export class AddPage {
     if (!this.query || this.query.length <= 3) {
       // clear
       console.log("clearing");
+      this.searching = false;
       this.searchResults = [];
       this.filteredSearchResults = {
         0: [],
@@ -90,6 +94,8 @@ export class AddPage {
       console.log(this.searchResults);
     }).catch((err) => {
       console.log(err);
+      this.searching = false;
+      this.simpleOut.createToast("Could not search... Please try again later.").present();
     });
   }
 
@@ -137,8 +143,14 @@ export class AddPage {
     } as MediaData;
 
     // perform a query to check duplicate
+    this.loading = this.simpleOut.loadCtrl.create({
+      content: "Writing that down..."
+    });
+
+    this.loading.present(); // display the loading box
 
     this.fireS.addMedia(data).then((res) => {
+      this.loading.dismiss(); // dismiss the loading box
       if (res == FsReturnCodes.NO_DUPLI_CHECK) {
         // added successfully, but no duplicates checked
         // do nothing

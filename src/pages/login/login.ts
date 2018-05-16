@@ -25,6 +25,8 @@ import { SimpleOutputProvider } from '../../providers/simple-output/simple-outpu
 })
 export class LoginPage {
   user = {} as User; // for input
+  loading: boolean = false; // for displaying loading login
+
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public modalCtrl: ModalController, public simpleOut: SimpleOutputProvider,
     public authP: AuthProvider) {
@@ -46,6 +48,9 @@ export class LoginPage {
   }
 
   signInUser() {
+
+    this.loading = true;
+
     if (!validateEmail(this.user.email)) {
       this.simpleOut.createToast("That is not a valid email").present();
       return;
@@ -69,6 +74,7 @@ export class LoginPage {
 
   private authenticate() {
     this.authP.signInUser(this.user.email, this.user.password).then(() => {
+      // this.loading = false;
       //this.goIn();
       // no need to goIn, because appComponent handles that for us
     }).catch((e) => {
