@@ -6,6 +6,7 @@ import { AuthProvider } from '../../providers/auth/auth';
 import { MediaData, FirestoreProvider, FsReturnCodes } from '../../providers/firestore/firestore';
 import { MAX_TITLE_LEN } from '../list/list';
 import { SimpleOutputProvider } from '../../providers/simple-output/simple-output';
+import { createTokenForExternalReference } from '@angular/compiler/src/identifiers';
 
 /**
  * Generated class for the AddPage page.
@@ -80,10 +81,15 @@ export class AddPage {
       };
       return;
     }
-    
+
     this.searching = true;
     // do the search, then display into list
     this.aniSearch.search(this.query).then((res) => {
+      if (res.length == 0) {
+        this.simpleOut.createToast("Couldn't find anything...").present();
+        this.searching = false;
+        return;
+      }
       this.searchResults = res;
       this.filterResults(MediaType.ANIME);
       this.filterResults(MediaType.MANGA);
@@ -97,6 +103,10 @@ export class AddPage {
       this.searching = false;
       this.simpleOut.createToast("Could not search... Please try again later.").present();
     });
+  }
+
+  resetSelection() {
+    this.selectedSearchResult = -1
   }
 
   selectSearchResult(index: number) {
@@ -164,10 +174,15 @@ export class AddPage {
       if (err == FsReturnCodes.DUPLICATE) {
         // duplicate exists
         this.simpleOut.createAlert("You already added this.").present();
+        this.loading.dismiss();
+        this.closeModal();
+
       } else if (err == FsReturnCodes.ERROR) {
         // error
+        this.loading.dismiss();
         this.simpleOut.createAlert("Please try again.").present();
       }
+
     });
 
   }

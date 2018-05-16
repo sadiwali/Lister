@@ -23,19 +23,19 @@
   </ion-searchbar>
   <ion-segment [(ngModel)]="selectedMediaType">
 
-    <ion-segment-button value="4">
-      ALL ({{ this.searchResults.length]}})
+    <ion-segment-button value="4" (click)=" this.selectedSearchResult = -1">
+      ALL ({{ this.searchResults.length}})
     </ion-segment-button>
-    <ion-segment-button value="0">
+    <ion-segment-button value="0" (click)=" this.selectedSearchResult = -1">
       ANIME ({{ this.filteredSearchResults[0].length}})
     </ion-segment-button>
-    <ion-segment-button value="3">
+    <ion-segment-button value="3" (click)=" this.selectedSearchResult = -1">
       MANGA ({{ this.filteredSearchResults[3].length}})
     </ion-segment-button>
-    <ion-segment-button value="1">
-      SHOWS ( this.filteredSearchResults[1].length)
+    <ion-segment-button value="1" (click)=" this.selectedSearchResult = -1">
+      SHOWS ({{ this.filteredSearchResults[1].length}})
     </ion-segment-button>
-    <ion-segment-button value="2">
+    <ion-segment-button value="2" (click)=" this.selectedSearchResult = -1">
       MOVIES ({{ this.filteredSearchResults[2].length}})
     </ion-segment-button>
   </ion-segment>
@@ -44,7 +44,7 @@
     <div [ngSwitch]="selectedMediaType">
       <ion-list *ngSwitchCase="4">
         <ion-item *ngIf="searching" text-center>
-          <ion-spinner ></ion-spinner>
+          <ion-spinner></ion-spinner>
         </ion-item>
         <ion-item no-lines [ngClass]="(i == selectedSearchResult) ? 'selected' : ''" *ngFor="let item of searchResults; let i = index"
           (click)="selectSearchResult(i);">

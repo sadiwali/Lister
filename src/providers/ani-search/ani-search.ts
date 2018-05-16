@@ -76,17 +76,19 @@ export class AniSearchProvider {
       // search all
       console.log("searching all");
       let aniData: any;
+      let errCount: number = 0;
       try {
         aniData = await this.searchAni(query);
       } catch (e) {
         // do nothing
+        errCount++;
       }
 
       let imdbData: any;
       try {
         imdbData = await this.searchImdb(query);
       } catch (e) {
-        // do nothing
+        errCount++;
       }
 
       let toRet = [];
@@ -105,10 +107,12 @@ export class AniSearchProvider {
       }
 
       return new Promise((resolve, reject) => {
-        if (toRet.length > 0) {
-          resolve(toRet);
-        } else {
+        if (errCount >= 2) {
+          // both apis had issues
           reject(toRet);
+        } else {
+          // none or at least 1 had issues, still can display the other
+          resolve(toRet);
         }
       }) as Promise<SearchResultItem[]>;
       // return new Promise((resolve, reject) => {
