@@ -9,6 +9,8 @@ import { AuthProvider } from '../providers/auth/auth';
 import { LoadingPage } from '../pages/loading/loading';
 import { SimpleOutputProvider } from '../providers/simple-output/simple-output';
 
+
+
 @Component({
   templateUrl: 'app.html'
 })
@@ -24,6 +26,7 @@ export class MyApp {
         // check if user logged in through persistence
         if (res && res.uid && res.displayName) {         
           // logged in so send to home
+          console.log("huh");
           this.simpleOut.createToast("Hi, " + res.displayName, 1000).present();
           this.rootPage = TabsPage;
         } else {

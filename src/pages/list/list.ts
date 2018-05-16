@@ -38,6 +38,7 @@ export class ListPage {
     public fireS: FirestoreProvider, public simpleOut: SimpleOutputProvider,
     public listStorage: StorageProvider) {
     this.subToLists();
+    
   }
 
   ionViewDidEnter() {

@@ -33,15 +33,13 @@ export class LoginPage {
     this.user.password = "password";
     //this.signInUser();
 
-    // debug imdb module
-    //ionic serve
+    
 
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad LoginPage');
   }
-
 
   showTerms() {
     this.modalCtrl.create(TermsPage).present();

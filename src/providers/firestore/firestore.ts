@@ -2,8 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { AuthProvider } from '../auth/auth';
-import { MediaType } from '../ani-search/ani-search';
+import { MediaType, AniSearchProvider, Api } from '../ani-search/ani-search';
 import { Observable } from 'rxjs/Observable';
+var myListJson = require('../../misc/result.json');
+
+
+
+
 
 /* Represents an item in a media list */
 export interface MediaData {
@@ -36,7 +41,7 @@ export interface UserData {
 export class FirestoreProvider {
 
   constructor(public http: HttpClient, public firestore: AngularFirestore,
-    public authP: AuthProvider) { }
+    public authP: AuthProvider, public aniSearch: AniSearchProvider) { }
 
   /* Add the given MediaData object into the database */
   addMedia(data: MediaData): Promise<FsReturnCodes> {
@@ -118,8 +123,58 @@ export class FirestoreProvider {
         })
     });
   }
-  /* one time code for me */
-  importfromfile(file) { }
+
+
+
+  async importfromfile() {
+    for (let a = 0; a < myListJson.length; a++) {
+      console.log(a);
+      let resData;
+      if (!isNaN(myListJson[a].title)) {
+        resData = await this.aniSearch.getAniById(myListJson[a].title, MediaType.ANIME);
+      } else {
+        resData = await this.aniSearch.getAni(myListJson[a].title, MediaType.ANIME);
+      }
+      if (resData && resData.title) {
+        // found what I am looking for from search
+        let data = {} as MediaData;
+        data.comments = myListJson[a].comments;
+        data.coverImage = resData.coverImage;
+        data.id = resData.id.toString();
+        data.rating = myListJson[a].rating;
+        data.source = Api[Api.ANILIST];
+        data.title = resData.title;
+        data.type = MediaType[MediaType.ANIME];
+        data.watchDate = new Date(myListJson[a].date);
+        // now we have the data, put it in
+        
+        // try to insert
+        console.log(data);
+        let resInsert;
+        try {
+
+          resInsert = await this.addMedia(data);
+        } catch (e) {
+          console.log("error found " + e);
+        }
+        console.log("here");
+
+        if (resInsert == FsReturnCodes.SUCCESS || resInsert == FsReturnCodes.NO_DUPLI_CHECK) {
+          // done okay
+          console.log("added " + data.title);
+        } else {
+          // could not insert
+          console.log("could not insert " + data.title + " because " + FsReturnCodes[resInsert])
+        }
+      } else {
+        console.log("error");
+      }
+
+    }
+  }
+
+
+
   /* Delete a record from a collection, given its id (not doc id) */
   delete(id: string): Promise<any> {
     return new Promise((resolve, reject) => {

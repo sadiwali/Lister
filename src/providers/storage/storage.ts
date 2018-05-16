@@ -77,9 +77,9 @@ export class StorageProvider {
   }
   /* sort function for sorting dates in chronological order */
   private compareDates(a: MediaData, b: MediaData) {
-    if ((a.watchDate as Date) < (b.watchDate as Date)) {
+    if ((a.watchDate as Date) > (b.watchDate as Date)) {
       return -1;
-    } else if ((a.watchDate as Date) > (b.watchDate as Date)) {
+    } else if ((a.watchDate as Date) < (b.watchDate as Date)) {
       return 1;
     } else {
       return 0;

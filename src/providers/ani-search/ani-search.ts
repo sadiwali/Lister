@@ -164,6 +164,84 @@ export class AniSearchProvider {
       });
     });
   }
+
+
+
+
+  /* Get an item on the AniList DB using GraphQL. */
+  getAniById(id: number, type: MediaType): Promise<SearchResultItem> {
+    // define query variables
+    var variables = {
+      "type": MediaType[type],
+      "id": id
+    };
+    // define the query
+    var query = `
+    query ($type: MediaType, $id: Int) {
+      Media(id: $id, type: $type) {
+        id
+        type
+        title {
+          romaji
+          native
+        }
+        startDate {
+          year
+          month
+          day
+        }
+        coverImage {
+          medium
+          large
+        }
+      }
+    }    
+    
+    `;
+
+    let options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        query: query,
+        variables: variables
+      })
+    };
+    // return the promise
+    return new Promise((resolve, reject) => {
+      // attempt to fetch data
+      fetch(this.url, options).then((response) => {
+        // data received
+        response.json().then((json) => {
+          // return data if response was good, otherwise reject promise
+          if (response.ok) {
+            // for each item in list
+
+            // search result json
+            let sr_json = {} as SearchResultItem;
+            sr_json.id = (json.data.Media as any).id;
+            sr_json.title = (json.data.Media as any).title.romaji;
+            sr_json.coverImage = (json.data.Media  as any).coverImage;
+            sr_json.startDate = (json.data.Media as any).startDate;
+            sr_json.source = Api[Api.ANILIST];
+            sr_json.type = MediaType[type];
+            resolve(sr_json);
+          } else {
+            reject(json);
+          }
+        });
+      }).catch((err) => {
+        // could not fetch, return the error
+        reject(err);
+      });
+    });
+  }
+
+
+
   /* Search for an item on the AniList DB using GraphQL. 
 
   query: the search query.

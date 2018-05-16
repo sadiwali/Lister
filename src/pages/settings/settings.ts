@@ -26,7 +26,7 @@ export class SettingsPage {
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public authP: AuthProvider, private app: App,
     public simpleOut: SimpleOutputProvider,
-    public modalCtrl: ModalController) { }
+    public modalCtrl: ModalController, public fireS: FirestoreProvider) { }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SettingsPage');
@@ -46,6 +46,10 @@ export class SettingsPage {
     if (this.versionTapCounter > 10) {
       this.simpleOut.createToast("what.").present;
     }
+  }
+
+  beginImport() {
+    this.fireS.importfromfile();
   }
 
 
